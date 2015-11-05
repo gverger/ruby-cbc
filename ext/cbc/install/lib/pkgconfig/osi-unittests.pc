@@ -1,0 +1,12 @@
+prefix=/home/guillaume/git/swig-cbc/src/Cbc-2.9.7
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include/coin
+
+Name: OsiUnitTests
+Description: COIN-OR Open Solver Interface Common Unit Tests
+URL: https://projects.coin-or.org/Osi
+Version: 0.107.6
+Libs: -L${libdir} -lOsiCommonTests
+Cflags: -I${includedir}
+Requires: osi

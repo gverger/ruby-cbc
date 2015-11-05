@@ -1,0 +1,9 @@
+prefix=/home/guillaume/git/swig-cbc/src/Cbc-2.9.7
+datadir=${prefix}/share/coin/Data/miplib3
+
+Name: Miplib3
+Description: MIPLIB3 models
+URL: https://projects.coin-or.org/svn/Data/miplib3
+Version: 1.2.6
+Libs:
+Cflags:

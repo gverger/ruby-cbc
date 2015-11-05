@@ -1,0 +1,12 @@
+prefix=/home/guillaume/git/swig-cbc/src/Cbc-2.9.7
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include/coin
+
+Name: CGL
+Description: COIN-OR Cut Generation Library
+URL: https://projects.coin-or.org/Cgl
+Version: 0.59.7
+Libs: -L${libdir} -lCgl 
+Cflags: -I${includedir}
+Requires: osi-clp osi coinutils 
