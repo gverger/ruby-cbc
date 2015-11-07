@@ -1,4 +1,3 @@
-
 module Cbc
   class Problem
 
@@ -78,13 +77,14 @@ module Cbc
 
       ObjectSpace.define_finalizer(self, self.class.finalizer(@cbc_model, @int_arrays, @big_index_arrays, @double_arrays))
 
+      @default_solve_params = {
+          log: 0,
+        }
+
     end
 
     def solve(params = {})
-      default = {
-        log: 0,
-      }
-      default.merge(params).each do |name, value|
+      @default_solve_params.merge(params).each do |name, value|
         Cbc_wrapper.Cbc_setParameter(@cbc_model, name.to_s, value.to_s)
       end
       Cbc_wrapper.Cbc_solve(@cbc_model)
@@ -95,6 +95,10 @@ module Cbc
       idx = @variables[var]
       return nil if idx.nil?
       @solution[idx]
+    end
+
+    def set_time_limit(seconds)
+      @default_solve_params[:sec] = seconds
     end
 
     def proven_optimal?
