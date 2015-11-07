@@ -26,10 +26,31 @@ end
 # current_path = File.expand_path('../', __FILE__)
 # %x{#{swig_cmd} -ruby -I#{current_path}/install/include/coin #{current_path}/cbc.i }
 
-find_library("Cbc", nil, "#{CBC_INSTALL}/lib")
-find_library("CbcSolver", nil, "#{CBC_INSTALL}/lib")
-find_header("Cbc_C_Interface.h", "#{CBC_INSTALL}/include/coin")
-find_header("Coin_C_defines.h", "#{CBC_INSTALL}/include/coin")
+libs = %w(
+  Cbc
+  CbcSolver
+  Cgl
+  Clp
+  ClpSolver
+  CoinUtils
+  Osi
+  OsiCbc
+  OsiClp
+  OsiCommonTests
+)
+
+
+libs.each do |lib|
+  find_library(lib,nil, "#{CBC_INSTALL}/lib")
+end
+
+headers = Dir["#{CBC_INSTALL}/include/coin/*.h"].map{ |h| h.split('/').last }
+# headers = Dir["#{CBC_INSTALL}/include/coin/*.hpp"].map{ |h| h.split('/').last }
+# with_cflags("-x c++") do
+  headers.each do |header|
+    find_header(header, "#{CBC_INSTALL}/include/coin")
+  end
+# end
 
 dir_config("cbc")
 create_makefile('cbc_wrapper')

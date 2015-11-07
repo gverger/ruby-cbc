@@ -1,8 +1,21 @@
 require "cbc/version"
 
 module Cbc
-  # Your code goes here...
 end
 
-require File.expand_path('../cbc/version', __FILE__)
-require File.expand_path('../cbc/cbc_wrapper', __FILE__)
+files = %w(
+cbc_wrapper
+model
+problem
+version
+ilp/constant
+ilp/constraint
+ilp/objective
+ilp/term
+ilp/term_array
+ilp/var
+)
+
+files.each do |file|
+  require File.expand_path("../cbc/#{file}", __FILE__)
+end
