@@ -1,0 +1,276 @@
+find_executable: checking for swig... -------------------- yes
+
+--------------------
+
+find_library: checking for main() in -lCbc... -------------------- yes
+
+"gcc -o conftest -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/x86_64-linux -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/ruby/backward -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0 -I.     -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wunused-variable -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat  -fPIC conftest.c  -L. -L/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -Wl,-R/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -L. -fstack-protector -rdynamic -Wl,-export-dynamic     -Wl,-R/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -L/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -lruby  -lpthread -ldl -lcrypt -lm   -lc"
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: int main(int argc, char **argv)
+4: {
+5:   return 0;
+6: }
+/* end */
+
+"gcc -o conftest -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/x86_64-linux -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/ruby/backward -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0 -I.     -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wunused-variable -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat  -fPIC conftest.c  -L. -L/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -Wl,-R/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -L. -fstack-protector -rdynamic -Wl,-export-dynamic     -Wl,-R/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -L/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -lruby -lCbc  -lpthread -ldl -lcrypt -lm   -lc"
+conftest.c: In function ‘t’:
+conftest.c:13:32: warning: variable ‘p’ set but not used [-Wunused-but-set-variable]
+ int t(void) { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
+                                ^
+/usr/bin/ld: ne peut trouver -lCbc
+collect2: error: ld returned 1 exit status
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: /*top*/
+ 4: extern int t(void);
+ 5: int main(int argc, char **argv)
+ 6: {
+ 7:   if (argc > 1000000) {
+ 8:     printf("%p", &t);
+ 9:   }
+10: 
+11:   return 0;
+12: }
+13: int t(void) { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
+/* end */
+
+"gcc -o conftest -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/x86_64-linux -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/ruby/backward -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0 -I.     -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wunused-variable -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat  -fPIC conftest.c  -L. -L/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -Wl,-R/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -L. -fstack-protector -rdynamic -Wl,-export-dynamic     -Wl,-R/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -L/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -lruby -lCbc  -lpthread -ldl -lcrypt -lm   -lc"
+conftest.c: In function ‘t’:
+conftest.c:13:1: error: too few arguments to function ‘main’
+ int t(void) { main(); return 0; }
+ ^
+conftest.c:5:5: note: declared here
+ int main(int argc, char **argv)
+     ^
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: /*top*/
+ 4: extern int t(void);
+ 5: int main(int argc, char **argv)
+ 6: {
+ 7:   if (argc > 1000000) {
+ 8:     printf("%p", &t);
+ 9:   }
+10: 
+11:   return 0;
+12: }
+13: int t(void) { main(); return 0; }
+/* end */
+
+"gcc -o conftest -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/x86_64-linux -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/ruby/backward -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0 -I.     -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wunused-variable -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat  -fPIC conftest.c  -L/home/guillaume/git/swig-cbc/src/cbc/ext/cbc/install/lib -Wl,-R/home/guillaume/git/swig-cbc/src/cbc/ext/cbc/install/lib -L. -L/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -Wl,-R/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -L. -fstack-protector -rdynamic -Wl,-export-dynamic     -Wl,-R/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -L/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -lruby -lCbc  -lpthread -ldl -lcrypt -lm   -lc"
+conftest.c: In function ‘t’:
+conftest.c:13:32: warning: variable ‘p’ set but not used [-Wunused-but-set-variable]
+ int t(void) { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
+                                ^
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: /*top*/
+ 4: extern int t(void);
+ 5: int main(int argc, char **argv)
+ 6: {
+ 7:   if (argc > 1000000) {
+ 8:     printf("%p", &t);
+ 9:   }
+10: 
+11:   return 0;
+12: }
+13: int t(void) { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
+/* end */
+
+--------------------
+
+find_library: checking for main() in -lCbcSolver... -------------------- yes
+
+"gcc -o conftest -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/x86_64-linux -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/ruby/backward -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0 -I.     -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wunused-variable -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat  -fPIC conftest.c  -L/home/guillaume/git/swig-cbc/src/cbc/ext/cbc/install/lib -Wl,-R/home/guillaume/git/swig-cbc/src/cbc/ext/cbc/install/lib -L. -L/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -Wl,-R/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -L. -fstack-protector -rdynamic -Wl,-export-dynamic    -lCbc  -Wl,-R/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -L/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -lruby -lCbcSolver -lCbc  -lpthread -ldl -lcrypt -lm   -lc"
+conftest.c: In function ‘t’:
+conftest.c:13:32: warning: variable ‘p’ set but not used [-Wunused-but-set-variable]
+ int t(void) { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
+                                ^
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: /*top*/
+ 4: extern int t(void);
+ 5: int main(int argc, char **argv)
+ 6: {
+ 7:   if (argc > 1000000) {
+ 8:     printf("%p", &t);
+ 9:   }
+10: 
+11:   return 0;
+12: }
+13: int t(void) { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
+/* end */
+
+--------------------
+
+find_library: checking for main() in -lOsiCbc... -------------------- yes
+
+"gcc -o conftest -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/x86_64-linux -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/ruby/backward -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0 -I.     -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wunused-variable -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat  -fPIC conftest.c  -L/home/guillaume/git/swig-cbc/src/cbc/ext/cbc/install/lib -Wl,-R/home/guillaume/git/swig-cbc/src/cbc/ext/cbc/install/lib -L. -L/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -Wl,-R/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -L. -fstack-protector -rdynamic -Wl,-export-dynamic    -lCbcSolver -lCbc  -Wl,-R/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -L/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -lruby -lOsiCbc -lCbcSolver -lCbc  -lpthread -ldl -lcrypt -lm   -lc"
+conftest.c: In function ‘t’:
+conftest.c:13:32: warning: variable ‘p’ set but not used [-Wunused-but-set-variable]
+ int t(void) { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
+                                ^
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: /*top*/
+ 4: extern int t(void);
+ 5: int main(int argc, char **argv)
+ 6: {
+ 7:   if (argc > 1000000) {
+ 8:     printf("%p", &t);
+ 9:   }
+10: 
+11:   return 0;
+12: }
+13: int t(void) { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
+/* end */
+
+--------------------
+
+find_library: checking for main() in -lOsi... -------------------- yes
+
+"gcc -o conftest -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/x86_64-linux -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/ruby/backward -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0 -I.     -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wunused-variable -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat  -fPIC conftest.c  -L/home/guillaume/git/swig-cbc/src/cbc/ext/cbc/install/lib -Wl,-R/home/guillaume/git/swig-cbc/src/cbc/ext/cbc/install/lib -L. -L/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -Wl,-R/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -L. -fstack-protector -rdynamic -Wl,-export-dynamic    -lOsiCbc -lCbcSolver -lCbc  -Wl,-R/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -L/home/guillaume/.rvm/rubies/ruby-2.2.3/lib -lruby -lOsi -lOsiCbc -lCbcSolver -lCbc  -lpthread -ldl -lcrypt -lm   -lc"
+conftest.c: In function ‘t’:
+conftest.c:13:32: warning: variable ‘p’ set but not used [-Wunused-but-set-variable]
+ int t(void) { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
+                                ^
+checked program was:
+/* begin */
+ 1: #include "ruby.h"
+ 2: 
+ 3: /*top*/
+ 4: extern int t(void);
+ 5: int main(int argc, char **argv)
+ 6: {
+ 7:   if (argc > 1000000) {
+ 8:     printf("%p", &t);
+ 9:   }
+10: 
+11:   return 0;
+12: }
+13: int t(void) { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
+/* end */
+
+--------------------
+
+find_header: checking for Cbc_C_Interface.h in /home/guillaume/git/swig-cbc/src/cbc/ext/cbc/install/include/coin... -------------------- yes
+
+"gcc -E -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/x86_64-linux -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/ruby/backward -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0 -I.     -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wunused-variable -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat  -fPIC  conftest.c -o conftest.i"
+conftest.c:3:29: fatal error: Cbc_C_Interface.h: Aucun fichier ou dossier de ce type
+ #include <Cbc_C_Interface.h>
+                             ^
+compilation terminated.
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <Cbc_C_Interface.h>
+/* end */
+
+"gcc -E -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/x86_64-linux -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/ruby/backward -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0 -I.     -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wunused-variable -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat  -fPIC -I/home/guillaume/git/swig-cbc/src/cbc/ext/cbc/install/include/coin conftest.c -o conftest.i"
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <Cbc_C_Interface.h>
+/* end */
+
+--------------------
+
+find_header: checking for Coin_C_defines.h in /home/guillaume/git/swig-cbc/src/cbc/ext/cbc/install/include/coin... -------------------- yes
+
+"gcc -E -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/x86_64-linux -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/ruby/backward -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0 -I. -I/home/guillaume/git/swig-cbc/src/cbc/ext/cbc/install/include/coin     -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wunused-variable -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat  -fPIC  conftest.c -o conftest.i"
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <Coin_C_defines.h>
+/* end */
+
+--------------------
+
+find_header: checking for OsiCbcSolverInterface.hpp in /home/guillaume/git/swig-cbc/src/cbc/ext/cbc/install/include/coin... -------------------- no
+
+"gcc -E -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/x86_64-linux -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/ruby/backward -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0 -I. -I/home/guillaume/git/swig-cbc/src/cbc/ext/cbc/install/include/coin     -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wunused-variable -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat  -fPIC  conftest.c -o conftest.i"
+In file included from conftest.c:3:0:
+/home/guillaume/git/swig-cbc/src/cbc/ext/cbc/install/include/coin/OsiCbcSolverInterface.hpp:9:18: fatal error: string: Aucun fichier ou dossier de ce type
+ #include <string>
+                  ^
+compilation terminated.
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <OsiCbcSolverInterface.hpp>
+/* end */
+
+"gcc -E -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/x86_64-linux -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/ruby/backward -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0 -I. -I/home/guillaume/git/swig-cbc/src/cbc/ext/cbc/install/include/coin     -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wunused-variable -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat  -fPIC -I/home/guillaume/git/swig-cbc/src/cbc/ext/cbc/install/include/coin conftest.c -o conftest.i"
+In file included from conftest.c:3:0:
+/home/guillaume/git/swig-cbc/src/cbc/ext/cbc/install/include/coin/OsiCbcSolverInterface.hpp:9:18: fatal error: string: Aucun fichier ou dossier de ce type
+ #include <string>
+                  ^
+compilation terminated.
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <OsiCbcSolverInterface.hpp>
+/* end */
+
+--------------------
+
+find_header: checking for OsiConfig.h in /home/guillaume/git/swig-cbc/src/cbc/ext/cbc/install/include/coin... -------------------- yes
+
+"gcc -E -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/x86_64-linux -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/ruby/backward -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0 -I. -I/home/guillaume/git/swig-cbc/src/cbc/ext/cbc/install/include/coin     -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wunused-variable -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat  -fPIC  conftest.c -o conftest.i"
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <OsiConfig.h>
+/* end */
+
+--------------------
+
+find_header: checking for OsiSolverInterface.hpp in /home/guillaume/git/swig-cbc/src/cbc/ext/cbc/install/include/coin... -------------------- no
+
+"gcc -E -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/x86_64-linux -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/ruby/backward -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0 -I. -I/home/guillaume/git/swig-cbc/src/cbc/ext/cbc/install/include/coin     -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wunused-variable -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat  -fPIC  conftest.c -o conftest.i"
+In file included from conftest.c:3:0:
+/home/guillaume/git/swig-cbc/src/cbc/ext/cbc/install/include/coin/OsiSolverInterface.hpp:8:19: fatal error: cstdlib: Aucun fichier ou dossier de ce type
+ #include <cstdlib>
+                   ^
+compilation terminated.
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <OsiSolverInterface.hpp>
+/* end */
+
+"gcc -E -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/x86_64-linux -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0/ruby/backward -I/home/guillaume/.rvm/rubies/ruby-2.2.3/include/ruby-2.2.0 -I. -I/home/guillaume/git/swig-cbc/src/cbc/ext/cbc/install/include/coin     -O3 -fno-fast-math -ggdb3 -Wall -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wunused-variable -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wimplicit-function-declaration -Wdeprecated-declarations -Wno-packed-bitfield-compat  -fPIC -I/home/guillaume/git/swig-cbc/src/cbc/ext/cbc/install/include/coin conftest.c -o conftest.i"
+In file included from conftest.c:3:0:
+/home/guillaume/git/swig-cbc/src/cbc/ext/cbc/install/include/coin/OsiSolverInterface.hpp:8:19: fatal error: cstdlib: Aucun fichier ou dossier de ce type
+ #include <cstdlib>
+                   ^
+compilation terminated.
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <OsiSolverInterface.hpp>
+/* end */
+
+--------------------
+

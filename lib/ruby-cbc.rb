@@ -1,4 +1,4 @@
-require "cbc/version"
+require "ruby-cbc/version"
 
 module Cbc
 end
@@ -17,5 +17,5 @@ ilp/var
 )
 
 files.each do |file|
-  require File.expand_path("../cbc/#{file}", __FILE__)
+  require File.expand_path("../ruby-cbc/#{file}", __FILE__)
 end

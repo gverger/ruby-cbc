@@ -52,5 +52,5 @@ headers = Dir["#{CBC_INSTALL}/include/coin/*.h"].map{ |h| h.split('/').last }
   end
 # end
 
-dir_config("cbc")
+dir_config("ruby-cbc")
 create_makefile('cbc_wrapper')
