@@ -4,7 +4,6 @@ module Cbc
 end
 
 files = %w(
-cbc_wrapper
 model
 problem
 version
