@@ -1,3 +1,5 @@
+require "cbc_wrapper"
+
 module Cbc
   class Problem
 
