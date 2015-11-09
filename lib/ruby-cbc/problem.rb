@@ -124,6 +124,15 @@ module Cbc
       Cbc_wrapper.Cbc_isSolutionLimitReached(@cbc_model)
     end
 
+    def objective_value
+      Cbc_wrapper.Cbc_getObjValue(@cbc_model)
+    end
+
+    # Returns the best know bound so far
+    def best_bound
+      Cbc_wrapper.Cbc_getBestPossibleObjValue(@cbc_model)
+    end
+
     def self.finalizer(cbc_model, int_arrays, big_index_arrays, double_arrays)
       proc do
         Cbc_wrapper.Cbc_deleteModel(cbc_model)
