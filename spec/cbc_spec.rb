@@ -65,6 +65,18 @@ describe Cbc do
     expect(p.value_of(x)).to eq(4)
   end
 
+  it "can solve a problem without optimization" do
+    m = Cbc::Model.new
+    x = m.int_var(4..10)
+    p = m.to_problem
+    p.solve
+
+    expect(p.proven_optimal?).to eq(true)
+    expect(p.value_of(x)).to eq(4)
+  end
+
+  
+
   it 'process a simple problem' do
     # The same Brief Example as found in section 1.3 of 
     # glpk-4.44/doc/glpk.pdf.

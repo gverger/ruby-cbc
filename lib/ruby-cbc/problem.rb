@@ -1,4 +1,4 @@
-require "cbc_wrapper"
+require "ruby-cbc/cbc_wrapper"
 
 module Cbc
   class Problem
@@ -40,10 +40,11 @@ module Cbc
       indexes << rows.count
 
       objective = Array.new(vars.count, 0)
-      model.objective.terms.each do |term|
-        objective[vars_data[term.var].col_idx] = term.mult
+      unless model.objective.nil?
+        model.objective.terms.each do |term|
+          objective[vars_data[term.var].col_idx] = term.mult
+        end
       end
-      obj_sense = model.objective.objective_function == Ilp::Objective::MINIMIZE ? 1 : -1
 
       @cbc_model = Cbc_wrapper.Cbc_newModel
       Cbc_wrapper.Cbc_loadProblem(@cbc_model, model.vars.count, model.constraints.count,
@@ -51,7 +52,11 @@ module Cbc
                                  to_double_array(coefs), nil, nil, to_double_array(objective),
                                  nil, nil)
 
-      Cbc_wrapper.Cbc_setObjSense(@cbc_model, obj_sense)
+      unless model.objective.nil?
+        obj_sense = model.objective.objective_function == Ilp::Objective::MINIMIZE ? 1 : -1
+        Cbc_wrapper.Cbc_setObjSense(@cbc_model, obj_sense)
+      end
+
       model.constraints.each_with_index do |c, idx|
         case c.type
         when Ilp::Constraint::LESS_OR_EQ
