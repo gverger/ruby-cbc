@@ -1778,16 +1778,15 @@ int SWIG_Ruby_arity( VALUE proc, int minimal )
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define SWIGTYPE_p_BigIndexArray swig_types[0]
-#define SWIGTYPE_p_DoubleArray swig_types[1]
-#define SWIGTYPE_p_IntArray swig_types[2]
-#define SWIGTYPE_p_char swig_types[3]
-#define SWIGTYPE_p_double swig_types[4]
-#define SWIGTYPE_p_f_p_void_int_int_p_q_const__double_int_p_q_const__int_int_p_p_char__void swig_types[5]
-#define SWIGTYPE_p_int swig_types[6]
-#define SWIGTYPE_p_void swig_types[7]
-static swig_type_info *swig_types[9];
-static swig_module_info swig_module = {swig_types, 8, 0, 0, 0, 0};
+#define SWIGTYPE_p_DoubleArray swig_types[0]
+#define SWIGTYPE_p_IntArray swig_types[1]
+#define SWIGTYPE_p_char swig_types[2]
+#define SWIGTYPE_p_double swig_types[3]
+#define SWIGTYPE_p_f_p_void_int_int_p_q_const__double_int_p_q_const__int_int_p_p_char__void swig_types[4]
+#define SWIGTYPE_p_int swig_types[5]
+#define SWIGTYPE_p_void swig_types[6]
+static swig_type_info *swig_types[8];
+static swig_module_info swig_module = {swig_types, 7, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -2019,24 +2018,6 @@ SWIGINTERN double *DoubleArray_cast(DoubleArray *self){
   }
 SWIGINTERN DoubleArray *DoubleArray_frompointer(double *t){
     return (DoubleArray *)(t);
-  }
-
-typedef CoinBigIndex BigIndexArray;
-
-SWIGINTERN BigIndexArray *new_BigIndexArray(size_t nelements){
-    return (CoinBigIndex *)malloc((nelements)*sizeof(CoinBigIndex));
-  }
-SWIGINTERN CoinBigIndex BigIndexArray___getitem__(BigIndexArray *self,size_t index){
-    return self[index];
-  }
-SWIGINTERN void BigIndexArray___setitem__(BigIndexArray *self,size_t index,CoinBigIndex value){
-    self[index] = value;
-  }
-SWIGINTERN CoinBigIndex *BigIndexArray_cast(BigIndexArray *self){
-    return self;
-  }
-SWIGINTERN BigIndexArray *BigIndexArray_frompointer(CoinBigIndex *t){
-    return (BigIndexArray *)(t);
   }
 
 SWIGINTERN swig_type_info*
@@ -2490,191 +2471,6 @@ _wrap_DoubleArray_frompointer(int argc, VALUE *argv, VALUE self) {
   arg1 = (double *)(argp1);
   result = (DoubleArray *)DoubleArray_frompointer(arg1);
   vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_DoubleArray, 0 |  0 );
-  return vresult;
-fail:
-  return Qnil;
-}
-
-
-static swig_class SwigClassBigIndexArray;
-
-#ifdef HAVE_RB_DEFINE_ALLOC_FUNC
-SWIGINTERN VALUE
-_wrap_BigIndexArray_allocate(VALUE self) {
-#else
-  SWIGINTERN VALUE
-  _wrap_BigIndexArray_allocate(int argc, VALUE *argv, VALUE self) {
-#endif
-    
-    
-    VALUE vresult = SWIG_NewClassInstance(self, SWIGTYPE_p_BigIndexArray);
-#ifndef HAVE_RB_DEFINE_ALLOC_FUNC
-    rb_obj_call_init(vresult, argc, argv);
-#endif
-    return vresult;
-  }
-  
-
-SWIGINTERN VALUE
-_wrap_new_BigIndexArray(int argc, VALUE *argv, VALUE self) {
-  size_t arg1 ;
-  size_t val1 ;
-  int ecode1 = 0 ;
-  BigIndexArray *result = 0 ;
-  
-  if ((argc < 1) || (argc > 1)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
-  }
-  ecode1 = SWIG_AsVal_size_t(argv[0], &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), Ruby_Format_TypeError( "", "size_t","BigIndexArray", 1, argv[0] ));
-  } 
-  arg1 = (size_t)(val1);
-  result = (BigIndexArray *)new_BigIndexArray(arg1);
-  DATA_PTR(self) = result;
-  return self;
-fail:
-  return Qnil;
-}
-
-
-SWIGINTERN void delete_BigIndexArray(BigIndexArray *self){
-    free((char*)self);
-  }
-SWIGINTERN void
-free_BigIndexArray(BigIndexArray *arg1) {
-    delete_BigIndexArray(arg1);
-}
-
-
-/*
-  Document-method: Cbc_wrapper::BigIndexArray.[]
-
-  call-seq:
-    [](index) -> CoinBigIndex
-
-Element accessor/slicing.
-*/
-SWIGINTERN VALUE
-_wrap_BigIndexArray___getitem__(int argc, VALUE *argv, VALUE self) {
-  BigIndexArray *arg1 = (BigIndexArray *) 0 ;
-  size_t arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  size_t val2 ;
-  int ecode2 = 0 ;
-  CoinBigIndex result;
-  VALUE vresult = Qnil;
-  
-  if ((argc < 1) || (argc > 1)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
-  }
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_BigIndexArray, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), Ruby_Format_TypeError( "", "BigIndexArray *","__getitem__", 1, self )); 
-  }
-  arg1 = (BigIndexArray *)(argp1);
-  ecode2 = SWIG_AsVal_size_t(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), Ruby_Format_TypeError( "", "size_t","__getitem__", 2, argv[0] ));
-  } 
-  arg2 = (size_t)(val2);
-  result = (CoinBigIndex)BigIndexArray___getitem__(arg1,arg2);
-  vresult = SWIG_From_int((int)(result));
-  return vresult;
-fail:
-  return Qnil;
-}
-
-
-
-/*
-  Document-method: Cbc_wrapper::BigIndexArray.[]=
-
-  call-seq:
-    []=(index, value)
-
-Element setter/slicing.
-*/
-SWIGINTERN VALUE
-_wrap_BigIndexArray___setitem__(int argc, VALUE *argv, VALUE self) {
-  BigIndexArray *arg1 = (BigIndexArray *) 0 ;
-  size_t arg2 ;
-  CoinBigIndex arg3 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  size_t val2 ;
-  int ecode2 = 0 ;
-  int val3 ;
-  int ecode3 = 0 ;
-  
-  if ((argc < 2) || (argc > 2)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 2)",argc); SWIG_fail;
-  }
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_BigIndexArray, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), Ruby_Format_TypeError( "", "BigIndexArray *","__setitem__", 1, self )); 
-  }
-  arg1 = (BigIndexArray *)(argp1);
-  ecode2 = SWIG_AsVal_size_t(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), Ruby_Format_TypeError( "", "size_t","__setitem__", 2, argv[0] ));
-  } 
-  arg2 = (size_t)(val2);
-  ecode3 = SWIG_AsVal_int(argv[1], &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), Ruby_Format_TypeError( "", "CoinBigIndex","__setitem__", 3, argv[1] ));
-  } 
-  arg3 = (CoinBigIndex)(val3);
-  BigIndexArray___setitem__(arg1,arg2,arg3);
-  return Qnil;
-fail:
-  return Qnil;
-}
-
-
-SWIGINTERN VALUE
-_wrap_BigIndexArray_cast(int argc, VALUE *argv, VALUE self) {
-  BigIndexArray *arg1 = (BigIndexArray *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  CoinBigIndex *result = 0 ;
-  VALUE vresult = Qnil;
-  
-  if ((argc < 0) || (argc > 0)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
-  }
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_BigIndexArray, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), Ruby_Format_TypeError( "", "BigIndexArray *","cast", 1, self )); 
-  }
-  arg1 = (BigIndexArray *)(argp1);
-  result = (CoinBigIndex *)BigIndexArray_cast(arg1);
-  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_int, 0 |  0 );
-  return vresult;
-fail:
-  return Qnil;
-}
-
-
-SWIGINTERN VALUE
-_wrap_BigIndexArray_frompointer(int argc, VALUE *argv, VALUE self) {
-  CoinBigIndex *arg1 = (CoinBigIndex *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  BigIndexArray *result = 0 ;
-  VALUE vresult = Qnil;
-  
-  if ((argc < 1) || (argc > 1)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
-  }
-  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_int, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), Ruby_Format_TypeError( "", "CoinBigIndex *","BigIndexArray_frompointer", 1, argv[0] )); 
-  }
-  arg1 = (CoinBigIndex *)(argp1);
-  result = (BigIndexArray *)BigIndexArray_frompointer(arg1);
-  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_BigIndexArray, 0 |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -4438,7 +4234,6 @@ static void *_p_IntArrayTo_p_int(void *x, int *SWIGUNUSEDPARM(newmemory)) {
 static void *_p_DoubleArrayTo_p_double(void *x, int *SWIGUNUSEDPARM(newmemory)) {
     return (void *)((double *)  ((DoubleArray *) x));
 }
-static swig_type_info _swigt__p_BigIndexArray = {"_p_BigIndexArray", "BigIndexArray *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_DoubleArray = {"_p_DoubleArray", "DoubleArray *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_IntArray = {"_p_IntArray", "IntArray *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
@@ -4448,7 +4243,6 @@ static swig_type_info _swigt__p_int = {"_p_int", "int *|CoinBigIndex *", 0, 0, (
 static swig_type_info _swigt__p_void = {"_p_void", "Cbc_Model *|Sbb_Model *|Clp_Simplex *|void *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
-  &_swigt__p_BigIndexArray,
   &_swigt__p_DoubleArray,
   &_swigt__p_IntArray,
   &_swigt__p_char,
@@ -4458,7 +4252,6 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_void,
 };
 
-static swig_cast_info _swigc__p_BigIndexArray[] = {  {&_swigt__p_BigIndexArray, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_DoubleArray[] = {  {&_swigt__p_DoubleArray, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_IntArray[] = {  {&_swigt__p_IntArray, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
@@ -4468,7 +4261,6 @@ static swig_cast_info _swigc__p_int[] = {  {&_swigt__p_IntArray, _p_IntArrayTo_p
 static swig_cast_info _swigc__p_void[] = {  {&_swigt__p_void, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
-  _swigc__p_BigIndexArray,
   _swigc__p_DoubleArray,
   _swigc__p_IntArray,
   _swigc__p_char,
@@ -4758,18 +4550,6 @@ SWIGEXPORT void Init_cbc_wrapper(void) {
   SwigClassDoubleArray.mark = 0;
   SwigClassDoubleArray.destroy = (void (*)(void *)) free_DoubleArray;
   SwigClassDoubleArray.trackObjects = 0;
-  
-  SwigClassBigIndexArray.klass = rb_define_class_under(mCbc_wrapper, "BigIndexArray", rb_cObject);
-  SWIG_TypeClientData(SWIGTYPE_p_BigIndexArray, (void *) &SwigClassBigIndexArray);
-  rb_define_alloc_func(SwigClassBigIndexArray.klass, _wrap_BigIndexArray_allocate);
-  rb_define_method(SwigClassBigIndexArray.klass, "initialize", _wrap_new_BigIndexArray, -1);
-  rb_define_method(SwigClassBigIndexArray.klass, "[]", _wrap_BigIndexArray___getitem__, -1);
-  rb_define_method(SwigClassBigIndexArray.klass, "[]=", _wrap_BigIndexArray___setitem__, -1);
-  rb_define_method(SwigClassBigIndexArray.klass, "cast", _wrap_BigIndexArray_cast, -1);
-  rb_define_singleton_method(SwigClassBigIndexArray.klass, "frompointer", _wrap_BigIndexArray_frompointer, -1);
-  SwigClassBigIndexArray.mark = 0;
-  SwigClassBigIndexArray.destroy = (void (*)(void *)) free_BigIndexArray;
-  SwigClassBigIndexArray.trackObjects = 0;
   rb_define_module_function(mCbc_wrapper, "Cbc_newModel", _wrap_Cbc_newModel, -1);
   rb_define_module_function(mCbc_wrapper, "Cbc_deleteModel", _wrap_Cbc_deleteModel, -1);
   rb_define_module_function(mCbc_wrapper, "Cbc_getVersion", _wrap_Cbc_getVersion, -1);

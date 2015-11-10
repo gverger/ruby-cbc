@@ -7,7 +7,6 @@ module Cbc
     def initialize(model)
 
       @int_arrays = []
-      @big_index_arrays = []
       @double_arrays = []
 
       @variables = {}
@@ -40,7 +39,7 @@ module Cbc
       indexes << rows.count
 
       objective = Array.new(vars.count, 0)
-      unless model.objective.nil?
+      if model.objective
         model.objective.terms.each do |term|
           objective[vars_data[term.var].col_idx] = term.mult
         end
@@ -52,7 +51,7 @@ module Cbc
                                  to_double_array(coefs), nil, nil, to_double_array(objective),
                                  nil, nil)
 
-      unless model.objective.nil?
+      if model.objective
         obj_sense = model.objective.objective_function == Ilp::Objective::MINIMIZE ? 1 : -1
         Cbc_wrapper.Cbc_setObjSense(@cbc_model, obj_sense)
       end
@@ -82,7 +81,7 @@ module Cbc
         Cbc_wrapper.Cbc_setColUpper(@cbc_model, idx, v.upper_bound) unless v.upper_bound.nil?
       end
 
-      ObjectSpace.define_finalizer(self, self.class.finalizer(@cbc_model, @int_arrays, @big_index_arrays, @double_arrays))
+      ObjectSpace.define_finalizer(self, self.class.finalizer(@cbc_model, @int_arrays, @double_arrays))
 
       @default_solve_params = {
           log: 0,
@@ -133,11 +132,10 @@ module Cbc
       Cbc_wrapper.Cbc_getBestPossibleObjValue(@cbc_model)
     end
 
-    def self.finalizer(cbc_model, int_arrays, big_index_arrays, double_arrays)
+    def self.finalizer(cbc_model, int_arrays, double_arrays)
       proc do
         Cbc_wrapper.Cbc_deleteModel(cbc_model)
         int_arrays.each { |ar| Cbc_wrapper.delete_intArray(ar) }
-        big_index_arrays.each { |ar| Cbc_wrapper.delete_bigIndexArray(ar) }
         double_arrays.each { |ar| Cbc_wrapper.delete_doubleArray(ar) }
       end
     end
@@ -152,13 +150,6 @@ module Cbc
       c_array = Cbc_wrapper::IntArray.new(array.count)
       array.each_with_index { |value, idx| c_array[idx] = value }
       @int_arrays << c_array
-      c_array
-    end
-
-    def to_big_index_array(array)
-      c_array = Cbc_wrapper::BigIndexArray.new(array.count)
-      array.each_with_index { |value, idx| c_array[idx] = value }
-      @big_index_arrays << c_array
       c_array
     end
 
