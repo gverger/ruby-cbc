@@ -39,8 +39,9 @@ module Ilp
     end
 
     def to_s
-      "#{mult} #{var.name}"
+      str = "++-"[mult <=> 0] << " "
+      str << mult.abs.to_s << " " if mult != 1
+      str << var.to_s
     end
-
   end
 end

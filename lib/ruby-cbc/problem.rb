@@ -51,6 +51,8 @@ module Cbc
                                  to_double_array(coefs), nil, nil, to_double_array(objective),
                                  nil, nil)
 
+      Cbc_wrapper.Cbc_setProblemName(@cbc_model, model.name) if model.name
+
       if model.objective
         obj_sense = model.objective.objective_function == Ilp::Objective::MINIMIZE ? 1 : -1
         Cbc_wrapper.Cbc_setObjSense(@cbc_model, obj_sense)

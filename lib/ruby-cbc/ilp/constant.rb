@@ -33,5 +33,12 @@ module Ilp
       -1 * term + value
     end
 
+    def to_s
+      value.to_s
+    end
+
+    def pretty_print
+      value.to_s
+    end
   end
 end

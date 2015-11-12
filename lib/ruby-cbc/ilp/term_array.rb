@@ -68,7 +68,7 @@ module Ilp
     end
 
     def to_s
-      @terms.join(' + ')
+      @terms.map(&:to_s).join(' ')
     end
 
   private

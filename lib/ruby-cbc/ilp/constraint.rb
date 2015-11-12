@@ -21,11 +21,11 @@ module Ilp
       when GREATER_OR_EQ
         sign = '>='
       when EQUALS
-        sign = '=='
+        sign = '='
       else
         sign = '??'
       end
-      "#{@terms} #{sign} #{@bound}"
+      "#{@terms.to_s} #{sign} #{@bound}"
     end
 
   end

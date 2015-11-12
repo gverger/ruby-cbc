@@ -55,6 +55,8 @@ module Ilp
       [Ilp::Term.new(self), num]
     end
 
+    def to_s
+      name
+    end
   end
-
 end

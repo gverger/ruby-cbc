@@ -15,5 +15,12 @@ module Ilp
       @objective_function = objective_function
     end
 
+    def to_s
+      str = ""
+      str << (@objective_function == :max ? "Maximize" : "Minimize")
+      str << "\n  "
+      str << terms.to_s
+    end
+
   end
 end

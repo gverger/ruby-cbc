@@ -7,12 +7,13 @@ module Cbc
   class Model
 
 
-    attr_accessor :vars, :constraints, :objective
+    attr_accessor :vars, :constraints, :objective, :name
 
-    def initialize
+    def initialize(name: "ILP Problem")
       @vars = Set.new
       @constraints = Set.new
       @objective = nil
+      @name = name
     end
 
     def int_var(range = nil, name: nil)
@@ -55,6 +56,39 @@ module Cbc
 
     def to_problem
       Cbc::Problem.new(self)
+    end
+
+    def to_s
+      str = ""
+      if objective
+      str << objective.to_s << "\n"
+      else
+        str << "Maximize\n  0 #{vars.first.to_s}\n"
+      end
+      str << "\nSubject To\n"
+      constraints.each do |cons|
+        str << "  " << cons.to_s << "\n"
+      end
+      bounded_vars = vars.select{ |v| v.kind != Ilp::Var::BINARY_KIND }
+      if bounded_vars.any?
+        str << "\nBounds\n"
+        bounded_vars.each { |v| str << "  #{v.lower_bound || "-inf"} <= #{v} <= #{v.upper_bound || "+inf"}\n" }
+      end
+
+      int_vars = vars.select{ |v| v.kind == Ilp::Var::INTEGER_KIND }
+      if int_vars.any?
+        str << "\nGenerals\n"
+        int_vars.each { |v| str << "  #{v}\n" }
+      end
+
+      bin_vars = vars.select{ |v| v.kind == Ilp::Var::BINARY_KIND }
+      if bin_vars.any?
+        str << "\nBinaries\n"
+        bin_vars.each { |v| str << "  #{v}\n" }
+      end
+      str << "\nEnd\n"
+
+      str
     end
 
   private
