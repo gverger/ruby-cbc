@@ -1,4 +1,4 @@
-prefix=/home/guillaume/git/swig-cbc/src/Cbc-2.9.7
+prefix=/home/guillaume/git/swig-cbc/src/cbc/ext/ruby-cbc/install
 datadir=${prefix}/share/coin/Data/miplib3
 
 Name: Miplib3

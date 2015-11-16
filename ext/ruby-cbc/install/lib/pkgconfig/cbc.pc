@@ -1,4 +1,4 @@
-prefix=/home/guillaume/git/swig-cbc/src/Cbc-2.9.7
+prefix=/home/guillaume/git/swig-cbc/src/cbc/ext/ruby-cbc/install
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include/coin
@@ -7,6 +7,6 @@ Name: CBC
 Description: COIN-OR Branch and Cut
 URL: https://projects.coin-or.org/Cbc
 Version: 2.9.7
-Libs: -L${libdir} -lCbcSolver -lCbc -lpthread -lrt 
+Libs: -L${libdir} -lCbcSolver -lCbc 
 Cflags: -I${includedir}
 Requires: osi-clp cgl osi coinutils 

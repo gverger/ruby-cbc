@@ -14,7 +14,7 @@ library_names='libOsiCommonTests.so.1.12.6 libOsiCommonTests.so.1 libOsiCommonTe
 old_library=''
 
 # Libraries that this one depends upon.
-dependency_libs=' /home/guillaume/git/swig-cbc/src/Cbc-2.9.7/lib/libOsi.la /home/guillaume/git/swig-cbc/src/Cbc-2.9.7/lib/libCoinUtils.la -lz'
+dependency_libs=' /home/guillaume/git/swig-cbc/src/cbc/ext/ruby-cbc/install/lib/libOsi.la /home/guillaume/git/swig-cbc/src/cbc/ext/ruby-cbc/install/lib/libCoinUtils.la -lz'
 
 # Version information for libOsiCommonTests.
 current=13
@@ -32,4 +32,4 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir='/home/guillaume/git/swig-cbc/src/Cbc-2.9.7/lib'
+libdir='/home/guillaume/git/swig-cbc/src/cbc/ext/ruby-cbc/install/lib'
