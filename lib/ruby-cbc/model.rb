@@ -72,7 +72,7 @@ module Cbc
       bounded_vars = vars.select{ |v| v.kind != Ilp::Var::BINARY_KIND }
       if bounded_vars.any?
         str << "\nBounds\n"
-        bounded_vars.each { |v| str << "  #{v.lower_bound || "-inf"} <= #{v} <= #{v.upper_bound || "+inf"}\n" }
+        bounded_vars.each { |v| str << "  #{lb_to_s(v.lower_bound)} <= #{v} <= #{ub_to_s(v.upper_bound)}\n" }
       end
 
       int_vars = vars.select{ |v| v.kind == Ilp::Var::INTEGER_KIND }
@@ -108,5 +108,18 @@ module Cbc
       @vars << v
       v
     end
+
+    def lb_to_s(lb) 
+      return "-inf" if ! lb || lb == -Cbc::INF
+      return "+inf" if lb == Cbc::INF
+      return "#{lb}"
+    end
+
+    def ub_to_s(ub) 
+      return "+inf" if ! ub || ub == Cbc::INF
+      return "-inf" if ub == -Cbc::INF
+      return "#{ub}"
+    end
+
   end
 end
