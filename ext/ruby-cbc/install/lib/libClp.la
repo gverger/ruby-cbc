@@ -14,7 +14,7 @@ library_names='libClp.so.1.13.9 libClp.so.1 libClp.so'
 old_library=''
 
 # Libraries that this one depends upon.
-dependency_libs=' /home/guillaume/git/swig-cbc/src/Cbc-2.9.7/lib/libCoinUtils.la -lz'
+dependency_libs=' /home/guillaume/git/swig-cbc/src/cbc/ext/ruby-cbc/install/lib/libCoinUtils.la -lz'
 
 # Version information for libClp.
 current=14
@@ -32,4 +32,4 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir='/home/guillaume/git/swig-cbc/src/Cbc-2.9.7/lib'
+libdir='/home/guillaume/git/swig-cbc/src/cbc/ext/ruby-cbc/install/lib'

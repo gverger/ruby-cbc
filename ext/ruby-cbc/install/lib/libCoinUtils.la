@@ -32,4 +32,4 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir='/home/guillaume/git/swig-cbc/src/Cbc-2.9.7/lib'
+libdir='/home/guillaume/git/swig-cbc/src/cbc/ext/ruby-cbc/install/lib'
