@@ -142,9 +142,9 @@ Subject To
   + 2 x1 + 2 x2 + 6 x3 <= 300
 
 Bounds
-  0 <= x1 <= Infinity
-  0 <= x2 <= Infinity
-  0 <= x3 <= Infinity
+  0 <= x1 <= +inf
+  0 <= x2 <= +inf
+  0 <= x3 <= +inf
 
 Generals
   x1
