@@ -45,12 +45,12 @@ module Cbc
     end
 
     def minimize(expression)
-      @objective = Ilp::Objective.new(expression, Ilp::Objective::MINIMIZE)
+      @objective = Ilp::Objective.new(expression, Ilp::Objective::MINIMIZE) if expression
       self
     end
 
     def maximize(expression)
-      @objective = Ilp::Objective.new(expression, Ilp::Objective::MAXIMIZE)
+      @objective = Ilp::Objective.new(expression, Ilp::Objective::MAXIMIZE) if expression
       self
     end
 

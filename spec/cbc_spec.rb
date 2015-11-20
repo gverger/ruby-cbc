@@ -75,6 +75,17 @@ describe Cbc do
     expect(p.value_of(x)).to eq(4)
   end
 
+  it "can handle NIL objective" do
+    m = Cbc::Model.new
+    x = m.int_var(4..10)
+    m.minimize(nil)
+    p = m.to_problem
+    p.solve
+
+    expect(p.proven_optimal?).to eq(true)
+    expect(p.value_of(x)).to eq(4)
+  end
+
   
 
   it 'process a simple problem' do
