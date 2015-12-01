@@ -26,6 +26,19 @@ recompiles them at installation.
 
 It also works on Heroku.
 
+### Installing on a mac
+
+When installing on a mac it's easier to install the Coin-Or Cbc library
+separately, as the compilation step above has been known to fail.
+
+If you are using Homebrew, there is a [set of formulae](https://github.com/coin-or-tools/homebrew-coinor) that help with the installation. To install via homebrew:
+
+    $ brew tap coin-or-tools/coinor
+    $ brew install cbc
+
+If not you can download the appropriate binary from the [Coin-Or
+webpage](http://www.coin-or.org/download.html).
+
 ## Usage
 
 ```ruby
