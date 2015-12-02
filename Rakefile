@@ -35,6 +35,4 @@ end
 
 CLEAN.include('ext/ruby-cbc/Makefile', 'ext/ruby-cbc/conftest.dSYM', 'ext/ruby-cbc/mkmf.log', 'ext/ruby-cbc/cbc_wrap.o')
 
-CLOBBER.include('ext/ruby-cbc/cbc_wrap.c', 'ruby-cbc.gemspec')
-
 task :default => [:build_extension, :spec]
