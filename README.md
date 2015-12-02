@@ -29,7 +29,8 @@ It also works on Heroku.
 ### Installing on a mac
 
 When installing on a mac it's easier to install the Coin-Or Cbc library
-separately, as the compilation step above has been known to fail.
+separately, as it wont have to recompile the library if you update the gem.
+You shoud take care of using the same cbc version though (2.9.7)
 
 If you are using Homebrew, there is a [set of formulae](https://github.com/coin-or-tools/homebrew-coinor) that help with the installation. To install via homebrew:
 

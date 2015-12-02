@@ -6,17 +6,18 @@ CBC_SRC_DIR = "/tmp/Cbc-2.9.7"
 CBC_INSTALL = "#{ROOT_DIR}/install"
 def install_cbc
   system "curl -o #{TARBALL_PATH} http://www.coin-or.org/download/source/Cbc/Cbc-2.9.7.tgz"
-  Dir.chdir "/tmp"
-  system "tar -xzf #{TARBALL_PATH}"
-  res = system "cd #{CBC_SRC_DIR} && ./configure --prefix=#{CBC_INSTALL} -C --with-pic --without-static && make -j4 && make install"
-  if not res
-    puts "Failed to build CBC, aborting"
-    exit 1
+  Dir.chdir "/tmp" do
+    system "tar -xzf #{TARBALL_PATH}"
+    res = system "cd #{CBC_SRC_DIR} && ./configure --prefix=#{CBC_INSTALL} -C --with-pic --without-static && make -j && make install"
+    if not res
+      puts "Failed to build CBC, aborting"
+      exit 1
+    end
   end
 end
 
 unless RUBY_PLATFORM =~ /x86_64-linux/
-  if not have_library("Cbc")
+  if !have_library("Cbc") #&& !find_library('Cbc', nil, "#{CBC_INSTALL}/lib")
     install_cbc
   end
 end
@@ -39,10 +40,6 @@ libs = %w(
   OsiCommonTests
 )
 
-# $CFLAGS << " -Linstall/lib -Iinstall/include/coin/ "
-# $LIBPATH << "install/lib"
-# $INCFLAGS << " -Iinstall/include/coin/ "
-
 libs.each do |lib|
   find_library(lib,nil, "#{CBC_INSTALL}/lib")
 end
@@ -56,5 +53,5 @@ headers = Dir["#{CBC_INSTALL}/include/coin/*.h"].map{ |h| h.split('/').last }
 # end
 
 dir_config("ruby-cbc")
-RPATHFLAG << " -Wl,-rpath='$$ORIGIN/install/lib'"
+RPATHFLAG << " -Wl,-rpath,'$$ORIGIN/install/lib'"
 create_makefile('cbc_wrapper')
