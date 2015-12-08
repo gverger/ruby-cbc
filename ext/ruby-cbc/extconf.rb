@@ -16,6 +16,8 @@ def install_cbc
   end
 end
 
+install_cbc
+
 ## Rerun this if updated cbc version
 #  swig_cmd = find_executable "swig"
 #  current_path = File.expand_path('../', __FILE__)
