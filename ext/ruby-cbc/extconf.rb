@@ -8,17 +8,11 @@ def install_cbc
   system "curl -o #{TARBALL_PATH} http://www.coin-or.org/download/source/Cbc/Cbc-2.9.7.tgz"
   Dir.chdir "/tmp" do
     system "tar -xzf #{TARBALL_PATH}"
-    res = system "cd #{CBC_SRC_DIR} && ./configure --prefix=#{CBC_INSTALL} -C --with-pic --without-static && make -j && make install"
+    res = system "cd #{CBC_SRC_DIR} && ./configure --prefix=#{CBC_INSTALL} -C --with-pic --without-static && make && make install"
     if not res
       puts "Failed to build CBC, aborting"
       exit 1
     end
-  end
-end
-
-unless RUBY_PLATFORM =~ /x86_64-linux/
-  if !have_library("Cbc") #&& !find_library('Cbc', nil, "#{CBC_INSTALL}/lib")
-    install_cbc
   end
 end
 
@@ -45,12 +39,9 @@ libs.each do |lib|
 end
 
 headers = Dir["#{CBC_INSTALL}/include/coin/*.h"].map{ |h| h.split('/').last }
-# headers = Dir["#{CBC_INSTALL}/include/coin/*.hpp"].map{ |h| h.split('/').last }
-# with_cflags("-x c++") do
-  headers.each do |header|
-    find_header(header, "#{CBC_INSTALL}/include/coin")
-  end
-# end
+headers.each do |header|
+  find_header(header, "#{CBC_INSTALL}/include/coin")
+end
 
 dir_config("ruby-cbc")
 RPATHFLAG << " -Wl,-rpath,'$$ORIGIN/install/lib'"
