@@ -1,5 +1,3 @@
-# require "../../ext/ruby-cbc/install/lib/cbc_wrapper"
-
 module Cbc
   class Problem
 
@@ -26,14 +24,14 @@ module Cbc
       end
 
       indexes = []
-      rows = [] 
+      rows = []
       coefs = []
 
       vars.each_with_index do |v, idx|
         v_data = vars_data[v]
         indexes[idx] = rows.count
-        rows += v_data.constraints
-        coefs += v_data.coefs
+        rows.concat v_data.constraints
+        coefs.concat v_data.coefs
       end
 
       indexes << rows.count
@@ -71,7 +69,7 @@ module Cbc
         end
       end
       model.vars.each_with_index do |v, idx|
-        case v.kind 
+        case v.kind
         when Ilp::Var::INTEGER_KIND
           Cbc_wrapper.Cbc_setInteger(@cbc_model, idx)
         when Ilp::Var::BINARY_KIND
@@ -160,11 +158,11 @@ module Cbc
       c_array = Cbc_wrapper::DoubleArray.new(array.count)
       array.each_with_index { |value, idx| c_array[idx] = value }
       @double_arrays << c_array
-      c_array 
+      c_array
     end
 
     VarData = Struct.new(:variable, :col_idx, :constraints, :coefs)
   end
 
-  
+
 end

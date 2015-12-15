@@ -1,9 +1,0 @@
-prefix=/home/guillaume/git/swig-cbc/src/cbc/ext/ruby-cbc/install
-datadir=${prefix}/share/coin/Data/Sample
-
-Name: Sample
-Description: Sample models
-URL: https://projects.coin-or.org/svn/Data/Sample
-Version: 1.2.10
-Libs:
-Cflags:

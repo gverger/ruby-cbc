@@ -1,4 +1,5 @@
 require "ruby-cbc/version"
+require 'cbc-wrapper'
 
 module Cbc
 end
@@ -15,7 +16,6 @@ ilp/term_array
 ilp/var
 )
 
-require File.expand_path("../../ext/ruby-cbc/cbc_wrapper", __FILE__)
 files.each do |file|
   require File.expand_path("../ruby-cbc/#{file}", __FILE__)
 end
