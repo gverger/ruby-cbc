@@ -1,15 +1,14 @@
 # Ruby-Cbc
 
 This gem wraps the Coin-Or Cbc Mixed Integer Linear Programming Library.
-It uses the version 2.9.7 of Cbc.
-
+It uses the version 2.9.7 of Cbc, and requires the version 2.9.7 of gem cbc-wrapper.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'cbc'
+gem 'ruby-cbc'
 ```
 
 And then execute:
@@ -18,27 +17,13 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install cbc
+    $ gem install ruby-cbc
 
 The gem includes a version of the Coin-Or Cbc library. If the system on which
 it is installed is not Linux 64bits, it downloads the library sources and
 recompiles them at installation.
 
 It also works on Heroku.
-
-### Installing on a mac
-
-When installing on a mac it's easier to install the Coin-Or Cbc library
-separately, as it wont have to recompile the library if you update the gem.
-You shoud take care of using the same cbc version though (2.9.7)
-
-If you are using Homebrew, there is a [set of formulae](https://github.com/coin-or-tools/homebrew-coinor) that help with the installation. To install via homebrew:
-
-    $ brew tap coin-or-tools/coinor
-    $ brew install cbc
-
-If not you can download the appropriate binary from the [Coin-Or
-webpage](http://www.coin-or.org/download.html).
 
 ## Usage
 
@@ -108,7 +93,8 @@ You can enforce constraints:
 model.enforce(x + y - z <= 10)
 ```
 You are not restricted to usual linear programming rules when writing a constraint.
-Usually you would have to write ```x - y = 0``` to express ```x = y```. Ruby-Cbc allows you to put variables and constants on both sides of the comparison operator. You can write
+Usually you would have to write ```x - y = 0``` to express ```x = y```.
+Ruby-Cbc allows you to put variables and constants on both sides of the comparison operator. You can write
 ```ruby
 model.enforce(x - y == 0)
 model.enforce(x == y)
