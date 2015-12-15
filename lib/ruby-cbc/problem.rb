@@ -1,5 +1,3 @@
-# require "../../ext/ruby-cbc/install/lib/cbc_wrapper"
-
 module Cbc
   class Problem
 
