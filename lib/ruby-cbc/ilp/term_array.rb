@@ -9,18 +9,19 @@ module Ilp
     end
 
     def +(vars)
+      new_terms = terms.dup
       if vars.is_a? Numeric
-        @terms << vars
+        new_terms << vars
       elsif vars.is_a? Ilp::Var
-        @terms << Ilp::Term.new(vars)
+        new_terms << Ilp::Term.new(vars)
       elsif vars.is_a? Ilp::Term
-        @terms << vars
+        new_terms << vars
       elsif vars.is_a? Ilp::TermArray
-        @terms += vars.terms
+        new_terms.concat(vars.terms)
       else
         raise ArgumentError, "Argument is not allowed: #{vars} of type #{vars.class}"
       end
-      self
+      TermArray.new(*new_terms)
     end
 
     def -(vars)
@@ -29,8 +30,8 @@ module Ilp
 
     def *(mult)
       raise ArgumentError, 'Argument is not numeric' unless mult.is_a? Numeric
-      @terms.map! { |term| term * mult }
-      self
+      new_terms = terms.map { |term| term * mult }
+      TermArray.new(*new_terms)
     end
 
     # cste + nb * var + nb * var...
