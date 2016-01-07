@@ -29,7 +29,7 @@ module Cbc
     end
 
     def bin_var_array(length, names: nil)
-      array_var(length, Ilp::Var::BINARY_KIND, range, names)
+      array_var(length, Ilp::Var::BINARY_KIND, nil, names)
     end
 
     def cont_var(range = nil, name: nil)
