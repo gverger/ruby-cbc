@@ -117,11 +117,11 @@ module Cbc
     end
 
     def time_limit_reached?
-      Cbc_wrapper.Cbc_isSecondsLimitReached(@cbc_model)
+      Cbc_wrapper.Cbc_isSecondsLimitReached(@cbc_model) == 1
     end
 
     def solution_limit_reached?
-      Cbc_wrapper.Cbc_isSolutionLimitReached(@cbc_model)
+      Cbc_wrapper.Cbc_isSolutionLimitReached(@cbc_model) == 1
     end
 
     def objective_value
