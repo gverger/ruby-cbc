@@ -101,7 +101,11 @@ module Cbc
     def value_of(var)
       idx = @variables[var]
       return nil if idx.nil?
-      @solution[idx]
+      if var.kind == Ilp::Var::CONTINUOUS_KIND
+        @solution[idx]
+      else
+        @solution[idx].round
+      end
     end
 
     def set_time_limit(seconds)
