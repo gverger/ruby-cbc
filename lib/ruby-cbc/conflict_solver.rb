@@ -9,6 +9,7 @@ module Cbc
     # Assuming there is a conflict
     def find_conflict
       conflict_set = []
+      all_constraints = @model.constraints.to_a
       loop do
         new_model = Model.new
         new_model.vars = @model.vars
@@ -20,18 +21,11 @@ module Cbc
           return conflict_set
         end
 
-        conflict_detected = false
-        @model.constraints.each do |constraint|
-          new_model.enforce(constraint)
-          if infeasible?(new_model)
-            conflict_detected = true
-            conflict_set << constraint
-            break
-          end
-        end
-        if !conflict_detected
+        constraint = first_failing(new_model, all_constraints)
+        if !constraint
           return conflict_set # should be empty
         end
+        conflict_set << constraint
       end
     end
 
@@ -75,21 +69,21 @@ module Cbc
       max_nb_constraints = constraints.count
 
       loop do
-      m = Model.new
-      m.vars = model.vars
-      m.constraints = model.constraints
+        m = Model.new
+        m.vars = model.vars
+        m.constraints = model.constraints
 
-      nb_constraints = (max_nb_constraints + min_nb_constraints) / 2
-      m.enforce(constraints.take(nb_constraints))
-      if infeasible?(m)
-        max_nb_constraints = nb_constraints
-      else
-        min_nb_constraints = nb_constraints
-      end
-      if max_nb_constraints - min_nb_constraints <= 1
-        return constraints[max_nb_constraints - 1]
-      end
-
+        nb_constraints = (max_nb_constraints + min_nb_constraints) / 2
+        m.enforce(constraints.take(nb_constraints))
+        if infeasible?(m)
+          max_nb_constraints = nb_constraints
+        else
+          min_nb_constraints = nb_constraints
+        end
+        if max_nb_constraints - min_nb_constraints <= 1
+          return nil if max_nb_constraints == constraints.count
+          return constraints[max_nb_constraints - 1]
+        end
       end
       # Shouldn't come here if the whole problem is infeasible
       return nil
