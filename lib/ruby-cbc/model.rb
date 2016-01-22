@@ -44,6 +44,8 @@ module Cbc
       constraints.each do |constraint|
         if constraint.instance_of? Ilp::Constraint
           self.constraints << constraint
+        elsif constraint.instance_of? Array
+          self.constraints += constraint
         elsif constraint.instance_of? Hash
           constraint.each do |name, c|
             self.constraints << c

@@ -12,6 +12,9 @@ module Cbc
       loop do
         new_model = Model.new
         new_model.vars = @model.vars
+
+        new_model.enforce(conflict_set)
+
         # No objective function
         if infeasible?(new_model)
           return conflict_set

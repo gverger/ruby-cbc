@@ -5,6 +5,7 @@ module Cbc
 end
 
 files = %w(
+conflict_solver
 model
 problem
 version
