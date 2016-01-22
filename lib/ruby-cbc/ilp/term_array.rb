@@ -41,7 +41,7 @@ module Ilp
       @terms = []
       constant ||= 0
       @terms << constant
-      hterms.each do |v, ts| 
+      hterms.each do |v, ts|
         t = ts.inject(Ilp::Term.new(v, 0)) { |v1, v2| v1.mult += v2.mult; v1 }
         terms << t if t.mult != 0
       end
@@ -70,6 +70,10 @@ module Ilp
 
     def to_s
       @terms.map(&:to_s).join(' ')
+    end
+
+    def vars
+      @terms.map(&:var)
     end
 
   private

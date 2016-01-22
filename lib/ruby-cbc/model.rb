@@ -122,13 +122,13 @@ module Cbc
       v
     end
 
-    def lb_to_s(lb) 
+    def lb_to_s(lb)
       return "-inf" if ! lb || lb == -Cbc::INF
       return "+inf" if lb == Cbc::INF
       return "#{lb}"
     end
 
-    def ub_to_s(ub) 
+    def ub_to_s(ub)
       return "+inf" if ! ub || ub == Cbc::INF
       return "-inf" if ub == -Cbc::INF
       return "#{ub}"

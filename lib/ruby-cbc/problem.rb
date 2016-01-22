@@ -1,12 +1,14 @@
 module Cbc
   class Problem
 
+    attr_reader :model
 
     def initialize(model)
 
       @int_arrays = []
       @double_arrays = []
 
+      @model = model
       @variables = {}
       vars = model.vars
       vars_data = {}
@@ -135,6 +137,14 @@ module Cbc
     # Returns the best know bound so far
     def best_bound
       Cbc_wrapper.Cbc_getBestPossibleObjValue(@cbc_model)
+    end
+
+    def find_conflict
+      @conflict_set ||= ConflictSolver.new(model).find_conflict
+    end
+
+    def find_conflict_vars
+      @conflict_vars ||= find_conflict.map(&:vars).flatten.uniq
     end
 
     def self.finalizer(cbc_model, int_arrays, double_arrays)

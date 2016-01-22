@@ -14,6 +14,10 @@ module Ilp
       @type = type
     end
 
+    def vars
+      terms.vars.uniq
+    end
+
     def to_s
       case @type
       when LESS_OR_EQ
