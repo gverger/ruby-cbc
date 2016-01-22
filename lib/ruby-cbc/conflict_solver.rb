@@ -36,7 +36,7 @@ module Cbc
     end
 
     def rec_find_conflict
-      rec_find([], [], @model.constraints)
+      rec_find([], [], @model.constraints.to_a)
     end
 
     def rec_find(background, conflict_set, to_test)
@@ -70,9 +70,26 @@ module Cbc
     # finds the first constraint from constraints that makes the problem infeasible
     def first_failing(model, constraints)
       return nil if infeasible?(model)
-      constraints.each do |constraint|
-        model.enforce(constraint)
-        return constraint if infeasible?(model)
+
+      min_nb_constraints = 1
+      max_nb_constraints = constraints.count
+
+      loop do
+      m = Model.new
+      m.vars = model.vars
+      m.constraints = model.constraints
+
+      nb_constraints = (max_nb_constraints + min_nb_constraints) / 2
+      m.enforce(constraints.take(nb_constraints))
+      if infeasible?(m)
+        max_nb_constraints = nb_constraints
+      else
+        min_nb_constraints = nb_constraints
+      end
+      if max_nb_constraints - min_nb_constraints <= 1
+        return constraints[max_nb_constraints - 1]
+      end
+
       end
       # Shouldn't come here if the whole problem is infeasible
       return nil
