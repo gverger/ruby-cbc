@@ -5,7 +5,7 @@ module Ilp
     GREATER_OR_EQ = :greater_or_eq
     EQUALS = :equals
 
-    attr_accessor :terms, :type, :bound
+    attr_accessor :terms, :type, :bound, :name
 
     def initialize(terms, type, bound)
       @terms = terms - bound

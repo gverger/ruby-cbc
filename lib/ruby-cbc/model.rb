@@ -40,8 +40,19 @@ module Cbc
       array_var(length, Ilp::Var::CONTINUOUS_KIND, range, names)
     end
 
-    def enforce(constraint)
-      constraints << constraint
+    def enforce(*constraints)
+      constraints.each do |constraint|
+        if constraint.instance_of? Ilp::Constraint
+          self.constraints << constraint
+        elsif constraint.instance_of? Hash
+          constraint.each do |name, c|
+            self.constraints << c
+            c.name = name.to_s
+          end
+        else
+          puts "Not a constraint: #{constraint}"
+        end
+      end
     end
 
     def minimize(expression)
