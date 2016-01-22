@@ -49,7 +49,7 @@ module Cbc
         elsif constraint.instance_of? Hash
           constraint.each do |name, c|
             self.constraints << c
-            c.name = name.to_s
+            c.function_name = name.to_s
           end
         else
           puts "Not a constraint: #{constraint}"

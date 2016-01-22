@@ -5,7 +5,7 @@ module Ilp
     GREATER_OR_EQ = :greater_or_eq
     EQUALS = :equals
 
-    attr_accessor :terms, :type, :bound, :name
+    attr_accessor :terms, :type, :bound, :function_name
 
     def initialize(terms, type, bound)
       @terms = terms - bound
@@ -16,6 +16,10 @@ module Ilp
 
     def vars
       terms.vars.uniq
+    end
+
+    def to_function_s
+      "#{function_name || 'constraint'}(#{vars.join(', ')})"
     end
 
     def to_s
