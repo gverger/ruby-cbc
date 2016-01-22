@@ -140,7 +140,7 @@ module Cbc
     end
 
     def find_conflict
-      @conflict_set ||= ConflictSolver.new(model).find_conflict
+      @conflict_set ||= ConflictSolver.new(model).rec_find_conflict
     end
 
     def find_conflict_vars
