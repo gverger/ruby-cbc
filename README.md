@@ -1,6 +1,8 @@
 # Ruby-Cbc
 
-This gem wraps the Coin-Or Cbc Mixed Integer Linear Programming Library.
+This gem is using Cbc, an Integer Linear Programming Library, to provide optimization problems solving
+to ruby. With Ruby-Cbc, you can model you problem, solve it and find conflicts in case of infeasibility.
+
 It uses the version 2.9.7 of Cbc, and requires the version 2.9.7 of gem cbc-wrapper.
 
 ## Installation
@@ -102,6 +104,13 @@ model.enforce(x + 2 == y + 2)
 model.enforce(0 == x - y)
 ```
 
+Ruby-Cbc allows you to name your constraints. Beware that their name is not an unique id. It is only a helper
+for human readability, and several constraints can share the same function name.
+```ruby
+model.enforce(my_function_name: x + y <= 50)
+model.constraints.map(&:to_function_s) # => ["my_function_name(x, y)"]
+```
+
 Linear constraints are usually of the form
 ```ruby
 a1 * x1 + a2 * x2 + ... + an * xn <= C
@@ -195,6 +204,24 @@ problem.objective_value # Will tell you the value of the best objective
 problem.best_bound      # Will tell you the best known bound
                         # if the bound equals the objective value, the problem is optimally solved
 problem.value_of(var)   # will tell you the computed value or a variable
+```
+
+### Finding conflicts
+
+Sometimes a problem has no feasible solution. In this case, one may wonder what is the minimum subset of conflicting
+inequations. For this prupose, you can use
+```ruby
+problem.find_conflict      # Will return an array of constraints that form an unsatifiable set
+problem.find_conflict_vars # Will return all variables involved in the unsatisfiable minimum set of constraints
+```
+It finds a minimum subset of constraints that make the problem unsatisfiable. Note that there could be several of them,
+but the solver only computes the first one it finds. Note also that it does so by solving several instances
+of relaxed versions of the problem. It might take some time! It is based on QuickXplain
+(http://dl.acm.org/citation.cfm?id=1597177).
+
+One way to see the results nicely could be
+```ruby
+problem.find_conflict.map(&:to_function_s)
 ```
 
 ## Contributing
