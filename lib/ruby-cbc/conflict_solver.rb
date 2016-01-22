@@ -11,67 +11,28 @@ module Cbc
       conflict_set = []
       all_constraints = @model.constraints.to_a
       loop do
-        new_model = Model.new
-        new_model.vars = @model.vars
+        m = Model.new
+        m.vars = @model.vars
+        m.enforce(conflict_set)
+        return conflict_set if infeasible?(m)
 
-        new_model.enforce(conflict_set)
+        constraint = first_failing(conflict_set, all_constraints)
+        return conflict_set if !constraint
 
-        # No objective function
-        if infeasible?(new_model)
-          return conflict_set
-        end
-
-        constraint = first_failing(new_model, all_constraints)
-        if !constraint
-          return conflict_set # should be empty
-        end
         conflict_set << constraint
       end
     end
 
-    def rec_find_conflict
-      rec_find([], [], @model.constraints.to_a)
-    end
-
-    def rec_find(background, conflict_set, to_test)
-      new_model = Model.new
-      new_model.vars = @model.vars
-      new_model.enforce(conflict_set)
-      new_model.enforce(background)
-
-      conflict_constraint = first_failing(new_model, to_test)
-
-      return [] if conflict_constraint.nil?
-
-      new_conflicts = [conflict_constraint]
-      to_test -= new_conflicts
-
-      split = split(to_test)
-      new_conflicts += rec_find(background + split[0], conflict_set + new_conflicts, split[1])
-      new_conflicts += rec_find(background, conflict_set + new_conflicts, split[0])
-
-      new_conflicts
-    end
-
-    def split(array)
-      split = array.each_slice(array.count / 2 + 1).to_a
-      [
-        split[0] || [],
-        split[1] || []
-      ]
-    end
-
+  private
     # finds the first constraint from constraints that makes the problem infeasible
-    def first_failing(model, constraints)
-      return nil if infeasible?(model)
-
+    def first_failing(conflict_set, constraints)
       min_nb_constraints = 1
-      max_nb_constraints = constraints.count
+      max_nb_constraints = constraints.count + 1
 
       loop do
         m = Model.new
-        m.vars = model.vars
-        m.constraints = model.constraints
+        m.vars = @model.vars
+        m.enforce(conflict_set)
 
         nb_constraints = (max_nb_constraints + min_nb_constraints) / 2
         m.enforce(constraints.take(nb_constraints))
@@ -81,7 +42,7 @@ module Cbc
           min_nb_constraints = nb_constraints
         end
         if max_nb_constraints - min_nb_constraints <= 1
-          return nil if max_nb_constraints == constraints.count
+          return nil if max_nb_constraints > constraints.count
           return constraints[max_nb_constraints - 1]
         end
       end
