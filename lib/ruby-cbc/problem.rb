@@ -3,7 +3,7 @@ module Cbc
 
     attr_reader :model
 
-    def initialize(model)
+    def initialize(model, continuous: false)
 
       @int_arrays = []
       @double_arrays = []
@@ -71,14 +71,15 @@ module Cbc
         end
       end
       model.vars.each_with_index do |v, idx|
-        case v.kind
-        when Ilp::Var::INTEGER_KIND
-          Cbc_wrapper.Cbc_setInteger(@cbc_model, idx)
-        when Ilp::Var::BINARY_KIND
-          Cbc_wrapper.Cbc_setInteger(@cbc_model, idx)
-          v.bounds = 0..1
-        when Ilp::Var::CONTINUOUS_KIND
+        if continuous
           Cbc_wrapper.Cbc_setContinuous(@cbc_model, idx)
+        else
+          case v.kind
+          when Ilp::Var::INTEGER_KIND, Ilp::Var::BINARY_KIND
+            Cbc_wrapper.Cbc_setInteger(@cbc_model, idx)
+          when Ilp::Var::CONTINUOUS_KIND
+            Cbc_wrapper.Cbc_setContinuous(@cbc_model, idx)
+          end
         end
         Cbc_wrapper.Cbc_setColLower(@cbc_model, idx, v.lower_bound) unless v.lower_bound.nil?
         Cbc_wrapper.Cbc_setColUpper(@cbc_model, idx, v.upper_bound) unless v.upper_bound.nil?

@@ -25,11 +25,11 @@ module Cbc
     end
 
     def bin_var(name: nil)
-      var(Ilp::Var::BINARY_KIND, nil, name)
+      var(Ilp::Var::BINARY_KIND, 0..1, name)
     end
 
     def bin_var_array(length, names: nil)
-      array_var(length, Ilp::Var::BINARY_KIND, nil, names)
+      array_var(length, Ilp::Var::BINARY_KIND, 0..1, names)
     end
 
     def cont_var(range = nil, name: nil)
