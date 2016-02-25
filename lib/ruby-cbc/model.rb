@@ -4,6 +4,20 @@ module Cbc
 
   INF = 1.0 / 0.0 # Useful for ranges
 
+  def self.add_all(variables)
+    to_add = variables.map do |variable|
+      case variable
+      when Numeric, Ilp::Term
+        variable
+      when Ilp::Var
+        Ilp::Term.new(variable)
+      else
+        raise 'Not a variable, a term or a numeric'
+      end
+    end
+    Ilp::TermArray.new(*to_add)
+  end
+
   class Model
 
 
