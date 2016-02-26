@@ -36,15 +36,16 @@ module Ilp
 
     # cste + nb * var + nb * var...
     def normalize!
-      constant = @terms.select{ |t| t.is_a? Numeric }.inject(:+)
+      constant = @terms.select{ |t| t.is_a? Numeric }.reduce(:+)
       hterms = @terms.select{ |t| t.is_a? Ilp::Term }.group_by(&:var)
       @terms = []
       constant ||= 0
       @terms << constant
-      hterms.each do |v, ts|
-        t = ts.inject(Ilp::Term.new(v, 0)) { |v1, v2| v1.mult += v2.mult; v1 }
-        terms << t if t.mult != 0
-      end
+      reduced = hterms.map do |v, ts|
+        return ts.first if ts.count == 1
+        ts.reduce(Ilp::Term.new(v, 0)) { |v1, v2| v1.mult += v2.mult; v1 }
+      end.reject { |term| term.mult == 0 }
+      @terms.concat reduced
       self
     end
 
