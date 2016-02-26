@@ -4,7 +4,7 @@ module Ilp
 
     attr_accessor :terms
 
-    def initialize(*terms)
+    def initialize(terms)
       @terms = terms
     end
 
@@ -21,7 +21,7 @@ module Ilp
       else
         raise ArgumentError, "Argument is not allowed: #{vars} of type #{vars.class}"
       end
-      TermArray.new(*new_terms)
+      TermArray.new(new_terms)
     end
 
     def -(vars)
@@ -31,7 +31,7 @@ module Ilp
     def *(mult)
       raise ArgumentError, 'Argument is not numeric' unless mult.is_a? Numeric
       new_terms = terms.map { |term| term * mult }
-      TermArray.new(*new_terms)
+      TermArray.new(new_terms)
     end
 
     # cste + nb * var + nb * var...

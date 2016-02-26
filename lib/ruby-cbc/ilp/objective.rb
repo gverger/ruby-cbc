@@ -8,7 +8,7 @@ module Ilp
     def initialize(terms, objective_function = MAXIMIZE)
       @terms = terms
       @terms = Ilp::Term.new(@terms) if @terms.is_a? Ilp::Var
-      @terms = Ilp::TermArray.new(@terms) if @terms.is_a? Ilp::Term
+      @terms = Ilp::TermArray.new([@terms]) if @terms.is_a? Ilp::Term
       @terms.normalize!
       cste = @terms.send(:pop_constant)
       puts "Removing constant [#{cste}] in objective" if cste != 0

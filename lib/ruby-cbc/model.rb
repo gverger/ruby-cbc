@@ -15,7 +15,7 @@ module Cbc
         raise 'Not a variable, a term or a numeric'
       end
     end
-    Ilp::TermArray.new(*to_add)
+    Ilp::TermArray.new(to_add)
   end
 
   class Model

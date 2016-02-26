@@ -9,23 +9,23 @@ module Ilp
     end
 
     def +(vars)
-      Ilp::TermArray.new(self) + vars
+      Ilp::TermArray.new([self]) + vars
     end
 
     def -(vars)
-      Ilp::TermArray.new(self) - vars
+      Ilp::TermArray.new([self]) - vars
     end
 
     def ==(vars)
-      Ilp::TermArray.new(self) == vars
+      Ilp::TermArray.new([self]) == vars
     end
 
     def <=(vars)
-      Ilp::TermArray.new(self) <= vars
+      Ilp::TermArray.new([self]) <= vars
     end
 
     def >=(vars)
-      Ilp::TermArray.new(self) >= vars
+      Ilp::TermArray.new([self]) >= vars
     end
 
 
@@ -35,7 +35,7 @@ module Ilp
     end
 
     def coerce(num)
-      [Ilp::TermArray.new(self), num]
+      [Ilp::TermArray.new([self]), num]
     end
 
     def to_s
