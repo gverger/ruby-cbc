@@ -42,8 +42,11 @@ module Ilp
       constant ||= 0
       @terms << constant
       reduced = hterms.map do |v, ts|
-        return ts.first if ts.count == 1
-        ts.reduce(Ilp::Term.new(v, 0)) { |v1, v2| v1.mult += v2.mult; v1 }
+        if ts.count == 1
+          ts.first
+        else
+          ts.reduce(Ilp::Term.new(v, 0)) { |v1, v2| v1.mult += v2.mult; v1 }
+        end
       end.reject { |term| term.mult == 0 }
       @terms.concat reduced
       self
