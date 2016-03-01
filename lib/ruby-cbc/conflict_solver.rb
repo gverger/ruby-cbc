@@ -37,7 +37,7 @@ module Cbc
   private
     # finds the first constraint from constraints that makes the problem infeasible
     def first_failing(conflict_set, constraints, nb_constraints, continuous: false)
-      min_nb_constraints = 1
+      min_nb_constraints = 0
       max_nb_constraints = nb_constraints + 1
 
       loop do
