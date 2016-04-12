@@ -10,12 +10,12 @@ module Cbc
     def find_conflict
       continuous = is_continuous_conflict?
       conflict_set = []
-      all_constraints = @model.constraints.to_a
+      all_constraints = @model.constraints
       nb_constraints = all_constraints.count
       loop do
         m = Model.new
         m.vars = @model.vars
-        m.enforce(conflict_set)
+        m.constraints = conflict_set
         return conflict_set if infeasible?(m, continuous: continuous)
 
         constraint_idx = first_failing(conflict_set, all_constraints, nb_constraints, continuous: continuous)
@@ -43,10 +43,9 @@ module Cbc
       loop do
         m = Model.new
         m.vars = @model.vars
-        m.enforce(conflict_set)
 
         half_constraints = (max_nb_constraints + min_nb_constraints) / 2
-        m.enforce(constraints.take(half_constraints))
+        m.constraints = conflict_set + constraints.take(half_constraints)
         if infeasible?(m, continuous: continuous)
           max_nb_constraints = half_constraints
         else

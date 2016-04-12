@@ -25,7 +25,7 @@ module Cbc
 
     def initialize(name: "ILP Problem")
       @vars = Set.new
-      @constraints = Set.new
+      @constraints = []
       @objective = nil
       @name = name
     end
