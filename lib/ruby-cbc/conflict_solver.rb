@@ -2,8 +2,12 @@ module Cbc
 
   class ConflictSolver
 
-    def initialize(model)
-     @model = model
+    def initialize(problem)
+      # clone the model minus the objective
+      @model = Model.new
+      @model.vars = problem.model.vars
+      @model.constraints = problem.model.constraints
+      @problem = problem
     end
 
     # Assuming there is a conflict
@@ -14,12 +18,12 @@ module Cbc
       nb_constraints = all_constraints.count
       loop do
         m = Model.new
-        m.vars = @model.vars
+        m.vars = conflict_set.flat_map(&:vars).uniq
         m.constraints = conflict_set
-        return conflict_set if infeasible?(m, continuous: continuous)
-
+        problem = Problem.new(m, continuous: continuous)
+        return conflict_set if infeasible?(problem)
         constraint_idx = first_failing(conflict_set, all_constraints, nb_constraints, continuous: continuous)
-        return conflict_set if !constraint_idx
+        return conflict_set if constraint_idx.nil?
 
         nb_constraints = constraint_idx
         conflict_set << all_constraints[constraint_idx]
@@ -28,10 +32,8 @@ module Cbc
 
     def is_continuous_conflict?
       # Same model without objective
-      model = Model.new
-      model.vars = @model.vars
-      model.constraints = @model.constraints
-      infeasible?(model, continuous: true)
+      problem = Problem.new(@model, continuous: true)
+      infeasible?(problem)
     end
 
   private
@@ -41,18 +43,19 @@ module Cbc
       max_nb_constraints = nb_constraints + 1
 
       loop do
-        m = Model.new
-        m.vars = @model.vars
-
         half_constraints = (max_nb_constraints + min_nb_constraints) / 2
-        m.constraints = conflict_set + constraints.take(half_constraints)
-        if infeasible?(m, continuous: continuous)
+        problem = Problem.new(@model,
+                              sub_problem_of: @problem,
+                              nb_constraints: half_constraints,
+                              additional_constraints: conflict_set,
+                              continuous: continuous)
+        if infeasible?(problem)
           max_nb_constraints = half_constraints
         else
           min_nb_constraints = half_constraints
         end
         if max_nb_constraints - min_nb_constraints <= 1
-          return nil if max_nb_constraints > constraints.count
+          return nil if max_nb_constraints > nb_constraints
           return max_nb_constraints - 1
         end
       end
@@ -60,8 +63,7 @@ module Cbc
       return nil
     end
 
-    def infeasible?(model, continuous: false)
-      problem = Problem.new(model, continuous: continuous)
+    def infeasible?(problem)
       problem.solve
       problem.proven_infeasible?
     end
