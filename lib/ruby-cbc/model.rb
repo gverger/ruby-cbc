@@ -1,5 +1,3 @@
-require "set"
-
 module Cbc
 
   INF = 1.0 / 0.0 # Useful for ranges
@@ -24,7 +22,7 @@ module Cbc
     attr_accessor :vars, :constraints, :objective, :name
 
     def initialize(name: "ILP Problem")
-      @vars = Set.new
+      @vars = []
       @constraints = []
       @objective = nil
       @name = name
@@ -82,7 +80,7 @@ module Cbc
     end
 
     def to_problem
-      Cbc::Problem.new(self)
+      Cbc::Problem.from_model(self)
     end
 
     def to_s
