@@ -49,18 +49,18 @@ module Util
       end
     end
 
-    def move_constraint_to_start(constraint_idx)
+    def move_constraint_to_start(range_idxs)
       # Move in the model
-      constraint = model.constraints[constraint_idx]
+      constraints = model.constraints[range_idxs]
       @model.constraints = @model.constraints.clone
-      @model.constraints[1, constraint_idx] = model.constraints[0, constraint_idx]
-      @model.constraints[0] = constraint
+      @model.constraints[constraints.count, range_idxs.max] = model.constraints[0, range_idxs.min]
+      @model.constraints[0, constraints.count] = constraints
 
       # Move in the matrix
-      constraint_start_idx = @row_start_idx[constraint_idx]
-      nb_vars = @row_start_idx[constraint_idx + 1] - constraint_start_idx
+      constraint_start_idx = @row_start_idx[range_idxs.min]
+      nb_vars = @row_start_idx[range_idxs.max + 1] - constraint_start_idx
       puts "BIZARRE" if nb_vars.zero?
-      (1..constraint_idx).reverse_each do |idx|
+      ((range_idxs.count)..(range_idxs.max)).reverse_each do |idx|
         @row_start_idx[idx] = @row_start_idx[idx - 1] + nb_vars
       end
       move_block_to_start(@col_idx, constraint_start_idx, nb_vars)
