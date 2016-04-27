@@ -1,17 +1,21 @@
-module Cbc
+module Util
   class CompressedRowStorage
 
-    attr_reader :model, :variable_index, :row_start_idx, :col_idx, :values
+    attr_accessor :model, :variable_index, :row_start_idx, :col_idx, :values
 
     def self.from_model(model)
-      crs = new
-      crs.model = Model.new
-      crs.variable_index = {}
-      model.vars.each_with_index do |v, idx|
-        crs.variable_index[v] = idx
+      new.tap do |crs|
+        crs.model = model
+        crs.variable_index = {}
+        model.vars.each_with_index do |v, idx|
+          crs.variable_index[v] = idx
+        end
+        crs.fill_matrix
       end
-      fill_matrix
-      crs
+    end
+
+    def nb_constraints
+      row_start_idx.count - 1
     end
 
     def fill_matrix
@@ -28,11 +32,14 @@ module Cbc
         @values[nb_cols, nb_insert] = constraint.terms.map { |term| term.mult }
         nb_cols += nb_insert
       end
-      @row_start_idx << crs.col_idx.count
+      @row_start_idx << @col_idx.count
     end
 
     def restrict_to_n_constraints(nb_constraints)
       length_of_values = @row_start_idx[nb_constraints]
+      if length_of_values.nil?
+        require 'pry'; binding.pry
+      end
       CompressedRowStorage.new.tap do |crs|
         crs.model = @model
         crs.variable_index = @variable_index
@@ -45,13 +52,14 @@ module Cbc
     def move_constraint_to_start(constraint_idx)
       # Move in the model
       constraint = model.constraints[constraint_idx]
-      @model.constraint = @model.constraint.clone
+      @model.constraints = @model.constraints.clone
       @model.constraints[1, constraint_idx] = model.constraints[0, constraint_idx]
       @model.constraints[0] = constraint
 
       # Move in the matrix
       constraint_start_idx = @row_start_idx[constraint_idx]
       nb_vars = @row_start_idx[constraint_idx + 1] - constraint_start_idx
+      puts "BIZARRE" if nb_vars.zero?
       (1..constraint_idx).reverse_each do |idx|
         @row_start_idx[idx] = @row_start_idx[idx - 1] + nb_vars
       end

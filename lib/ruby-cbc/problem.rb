@@ -1,22 +1,28 @@
 module Cbc
   class Problem
 
-    attr_reader :model, :variable_index, :crs
+    attr_accessor :model, :variable_index, :crs
 
-    def self.from_model(model)
-      crs = CompressedRowStorage.from_model(model)
-      from_compressed_row_storage(crs)
+    def self.from_model(model, continuous: false)
+      crs = Util::CompressedRowStorage.from_model(model)
+      from_compressed_row_storage(crs, continuous: continuous)
     end
 
-    def self.from_compressed_row_storage(crs)
+    def self.from_compressed_row_storage(crs, continuous: false)
       new.tap do |p|
         p.model = crs.model
         p.variable_index = crs.variable_index
-        p.create_cbc_problem
+        p.crs = crs
+        p.create_cbc_problem(continuous: continuous)
       end
     end
 
-    CCS = Struct.new(:col_start_idx, :row_idx, :values)
+    CCS = Struct.new(:col_start_idx, :row_idx, :values) do
+      def nb_vars
+        col_start_idx.count - 1
+      end
+    end
+
     def self.crs_to_ccs(crs)
       nb_per_column = Array.new(crs.col_idx.max.to_i + 1, 0)
       nb_values = crs.values.count
@@ -49,12 +55,12 @@ module Cbc
       @double_arrays = []
     end
 
-    def create_cbc_problem
+    def create_cbc_problem(continuous: false)
       @int_arrays = []
       @double_arrays = []
 
-      ccs = crs_to_ccs(@crs)
-      objective = Array.new(model.vars.count, 0)
+      ccs = self.class.crs_to_ccs(@crs)
+      objective = Array.new(ccs.nb_vars, 0)
       if model.objective
         model.objective.terms.each do |term|
           objective[@variable_index[term.var]] = term.mult
@@ -63,7 +69,7 @@ module Cbc
 
       @cbc_model = Cbc_wrapper.Cbc_newModel
       Cbc_wrapper.Cbc_loadProblem(
-        @cbc_model, model.vars.count, model.constraints.count,
+        @cbc_model, ccs.nb_vars, @crs.nb_constraints,
         to_int_array(ccs.col_start_idx), to_int_array(ccs.row_idx),
         to_double_array(ccs.values), nil, nil, to_double_array(objective),
         nil, nil)
@@ -77,19 +83,12 @@ module Cbc
         Cbc_wrapper.Cbc_setObjSense(@cbc_model, obj_sense)
       end
 
-      max_nb_constraints = nb_constraints
-      max_nb_constraints ||= model.constraints.count
-
       model.constraints.each_with_index do |c, idx|
-        break if idx >= max_nb_constraints
+        break if idx >= @crs.nb_constraints
         set_constraint_bounds(c, idx)
       end
-      unless additional_constraints.nil?
-        additional_constraints.each_with_index do |c, idx|
-          set_constraint_bounds(c, max_nb_constraints + idx)
-        end
-      end
       model.vars.each_with_index do |v, idx|
+        break if idx >= ccs.nb_vars
         if continuous
           Cbc_wrapper.Cbc_setContinuous(@cbc_model, idx)
         else
@@ -110,88 +109,6 @@ module Cbc
         log: 0,
       }
 
-
-    end
-
-    def initialize(model, continuous: false, sub_problem_of: nil, nb_constraints: nil, additional_constraints: nil)
-      @model = model
-
-      if sub_problem_of.nil?
-        @variable_index = {}
-        model.vars.each_with_index do |v, idx|
-          @variable_index[v] = idx
-        end
-
-        @crs = self.class.to_compressed_row_storage(model, @variable_index)
-      else
-        @variable_index = sub_problem_of.variable_index
-        @crs = sub_problem_of.crs
-      end
-
-
-      additional_crs = nil
-      unless additional_constraints.nil?
-        m = Model.new
-        m.vars = model.vars
-        m.constraints = additional_constraints
-        additional_crs = self.class.to_compressed_row_storage(m, @variable_index)
-      end
-      ccs = self.class.crs_to_ccs(@crs, nb_constraints, additional_crs)
-
-      objective = Array.new(model.vars.count, 0)
-      if model.objective
-        model.objective.terms.each do |term|
-          objective[@variable_index[term.var]] = term.mult
-        end
-      end
-
-      @cbc_model = Cbc_wrapper.Cbc_newModel
-      Cbc_wrapper.Cbc_loadProblem(@cbc_model, model.vars.count, model.constraints.count,
-                                  to_int_array(ccs.col_start_idx), to_int_array(ccs.row_idx),
-                                  to_double_array(ccs.values), nil, nil, to_double_array(objective),
-                                  nil, nil)
-
-
-      # Segmentation errors when setting name
-      # Cbc_wrapper.Cbc_setProblemName(@cbc_model, model.name) if model.name
-
-      if model.objective
-        obj_sense = model.objective.objective_function == Ilp::Objective::MINIMIZE ? 1 : -1
-        Cbc_wrapper.Cbc_setObjSense(@cbc_model, obj_sense)
-      end
-
-      max_nb_constraints = nb_constraints
-      max_nb_constraints ||= model.constraints.count
-
-      model.constraints.each_with_index do |c, idx|
-        break if idx >= max_nb_constraints
-        set_constraint_bounds(c, idx)
-      end
-      unless additional_constraints.nil?
-        additional_constraints.each_with_index do |c, idx|
-          set_constraint_bounds(c, max_nb_constraints + idx)
-        end
-      end
-      model.vars.each_with_index do |v, idx|
-        if continuous
-          Cbc_wrapper.Cbc_setContinuous(@cbc_model, idx)
-        else
-          case v.kind
-          when Ilp::Var::INTEGER_KIND, Ilp::Var::BINARY_KIND
-            Cbc_wrapper.Cbc_setInteger(@cbc_model, idx)
-          when Ilp::Var::CONTINUOUS_KIND
-            Cbc_wrapper.Cbc_setContinuous(@cbc_model, idx)
-          end
-        end
-        Cbc_wrapper.Cbc_setColLower(@cbc_model, idx, v.lower_bound) unless v.lower_bound.nil?
-        Cbc_wrapper.Cbc_setColUpper(@cbc_model, idx, v.upper_bound) unless v.upper_bound.nil?
-      end
-
-      ObjectSpace.define_finalizer(self, self.class.finalizer(@cbc_model, @int_arrays, @double_arrays))
-
-      @default_solve_params = {
-        log: 0,
-      }
 
     end
 
