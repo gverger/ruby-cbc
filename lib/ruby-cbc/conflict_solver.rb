@@ -16,22 +16,34 @@ module Cbc
       puts "continuous: #{continuous}"
       conflict_set = []
       crs = Util::CompressedRowStorage.from_model(@model)
+      max_iter = 4
       loop do
-        range_idxs = first_failing(conflict_set.count, crs, continuous: continuous)
-        return conflict_set if range_idxs.nil?
-        puts "add constraints #{range_idxs}"
+        range_are_all_of_size_1 = true
+        loop do
+          range_idxs = first_failing(conflict_set.count, crs, continuous: continuous, max_iterations: max_iter)
+          return conflict_set if range_idxs.nil?
 
-        # Check if conflict set is found
-        conflict_set.concat crs.model.constraints[range_idxs]
-        m = Model.new
-        m.vars = conflict_set.flat_map(&:vars).uniq
-        m.constraints = conflict_set
-        problem = Problem.from_model(m, continuous: continuous)
-        puts "infeasible?"
-        return conflict_set if infeasible?(problem)
+          range_are_all_of_size_1 &&= (range_idxs.count == 1)
+          puts "add constraints #{range_idxs}"
+          conflict_set.concat crs.model.constraints[range_idxs]
 
-        crs = crs.restrict_to_n_constraints(range_idxs.max + 1)
-        crs.move_constraint_to_start(range_idxs)
+          crs = crs.restrict_to_n_constraints(range_idxs.max + 1)
+          crs.move_constraint_to_start(range_idxs)
+
+          # Check if conflict set is found
+          crs2 = crs.restrict_to_n_constraints(conflict_set.count)
+          problem = Problem.from_compressed_row_storage(crs2, continuous: continuous)
+          # m = Model.new
+          # m.vars = conflict_set.flat_map(&:vars).uniq
+          # m.constraints = conflict_set
+          # problem = Problem.from_model(m, continuous: continuous)
+          puts "infeasible?"
+          break if infeasible?(problem)
+
+        end
+        max_iter += 1 if max_iter
+        break if range_are_all_of_size_1
+        conflict_set = []
       end
       conflict_set
     end
@@ -49,8 +61,8 @@ module Cbc
       max_nb_constraints = crs.nb_constraints + 1
 
       loop do
-        if max_iterations
-          break if max_iterations.zero?
+        unless max_iterations.nil?
+          return min_nb_constraints..([crs.nb_constraints, max_nb_constraints].min - 1) if max_iterations <= 0
           max_iterations -= 1
         end
         half_constraints = (max_nb_constraints + min_nb_constraints) / 2

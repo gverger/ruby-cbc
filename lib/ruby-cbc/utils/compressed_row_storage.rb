@@ -37,9 +37,6 @@ module Util
 
     def restrict_to_n_constraints(nb_constraints)
       length_of_values = @row_start_idx[nb_constraints]
-      if length_of_values.nil?
-        require 'pry'; binding.pry
-      end
       CompressedRowStorage.new.tap do |crs|
         crs.model = @model
         crs.variable_index = @variable_index
@@ -60,9 +57,12 @@ module Util
       constraint_start_idx = @row_start_idx[range_idxs.min]
       nb_vars = @row_start_idx[range_idxs.max + 1] - constraint_start_idx
       puts "BIZARRE" if nb_vars.zero?
+      offset= @row_start_idx[range_idxs.min]
+      new_begin = @row_start_idx[range_idxs].map! { |idx| idx - offset }
       ((range_idxs.count)..(range_idxs.max)).reverse_each do |idx|
-        @row_start_idx[idx] = @row_start_idx[idx - 1] + nb_vars
+        @row_start_idx[idx] = @row_start_idx[idx - range_idxs.count] + nb_vars
       end
+      @row_start_idx[0, range_idxs.count] = new_begin
       move_block_to_start(@col_idx, constraint_start_idx, nb_vars)
       move_block_to_start(@values, constraint_start_idx, nb_vars)
     end
