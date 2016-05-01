@@ -7,8 +7,11 @@ module Util
       new.tap do |crs|
         crs.model = model
         crs.variable_index = {}
-        model.vars.each_with_index do |v, idx|
+        idx = 0
+        while idx < model.vars.size do
+          v = model.vars[idx]
           crs.variable_index[v] = idx
+          idx += 1
         end
         crs.fill_matrix
       end
@@ -25,12 +28,15 @@ module Util
       @values = Array.new(nb_values)
 
       nb_cols = 0
-      @model.constraints.each_with_index do |constraint, c_idx|
+      c_idx = 0
+      while c_idx < @model.constraints.size do
+        constraint = @model.constraints[c_idx]
         @row_start_idx[c_idx] = nb_cols
         nb_insert = constraint.terms.count
         @col_idx[nb_cols, nb_insert] = constraint.terms.map { |term| variable_index[term.var] }
         @values[nb_cols, nb_insert] = constraint.terms.map { |term| term.mult }
         nb_cols += nb_insert
+        c_idx += 1
       end
       @row_start_idx << @col_idx.count
     end

@@ -31,14 +31,17 @@ module Cbc
 
       ccs = CCS.new(Array.new(nb_per_column.count + 1), Array.new(nb_values), Array.new(nb_values))
       ccs.col_start_idx[0] = 0
-      nb_per_column.each_with_index do |nb, idx|
-        ccs.col_start_idx[idx + 1] = ccs.col_start_idx[idx] + nb
+      idx = 0
+      while idx < nb_per_column.size
+        ccs.col_start_idx[idx + 1] = ccs.col_start_idx[idx] + nb_per_column[idx]
+        idx += 1
       end
 
       cols_idx = ccs.col_start_idx.clone
-      crs.row_start_idx.each_cons(2).each_with_index do |start_idxs, row_idx|
-        from = start_idxs.first
-        to = start_idxs.last - 1
+      row_idx = 0
+      while row_idx < crs.row_start_idx.size - 1 do
+        from = crs.row_start_idx[row_idx]
+        to = crs.row_start_idx[row_idx + 1] - 1
         (from..to).each do |idx|
           col_idx = crs.col_idx[idx]
           ccs_col_idx = cols_idx[col_idx]
@@ -46,6 +49,7 @@ module Cbc
           ccs.row_idx[ccs_col_idx] = row_idx
           ccs.values[ccs_col_idx] = crs.values[idx]
         end
+        row_idx += 1
       end
       ccs
     end
@@ -83,12 +87,15 @@ module Cbc
         Cbc_wrapper.Cbc_setObjSense(@cbc_model, obj_sense)
       end
 
-      model.constraints.each_with_index do |c, idx|
-        break if idx >= @crs.nb_constraints
+      idx = 0
+      while idx < @crs.nb_constraints do
+        c = model.constraints[idx]
         set_constraint_bounds(c, idx)
+        idx += 1
       end
-      model.vars.each_with_index do |v, idx|
-        break if idx >= ccs.nb_vars
+      idx = 0
+      while idx < ccs.nb_vars do
+        v = model.vars[idx]
         if continuous
           Cbc_wrapper.Cbc_setContinuous(@cbc_model, idx)
         else
@@ -101,6 +108,7 @@ module Cbc
         end
         Cbc_wrapper.Cbc_setColLower(@cbc_model, idx, v.lower_bound) unless v.lower_bound.nil?
         Cbc_wrapper.Cbc_setColUpper(@cbc_model, idx, v.upper_bound) unless v.upper_bound.nil?
+        idx += 1
       end
 
       ObjectSpace.define_finalizer(self, self.class.finalizer(@cbc_model, @int_arrays, @double_arrays))
@@ -197,14 +205,22 @@ module Cbc
 
     def to_int_array(array)
       c_array = Cbc_wrapper::IntArray.new(array.count)
-      array.each_with_index { |value, idx| c_array[idx] = value }
+      idx = 0
+      while idx < array.size do
+        c_array[idx] = array[idx]
+        idx += 1
+      end
       @int_arrays << c_array
       c_array
     end
 
     def to_double_array(array)
       c_array = Cbc_wrapper::DoubleArray.new(array.count)
-      array.each_with_index { |value, idx| c_array[idx] = value }
+      idx = 0
+      while idx < array.size do
+        c_array[idx] = array[idx]
+        idx += 1
+      end
       @double_arrays << c_array
       c_array
     end
