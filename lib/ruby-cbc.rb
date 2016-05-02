@@ -15,6 +15,7 @@ ilp/objective
 ilp/term
 ilp/term_array
 ilp/var
+utils/compressed_row_storage
 )
 
 files.each do |file|

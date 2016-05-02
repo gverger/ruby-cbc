@@ -19,7 +19,7 @@ module Ilp
     end
 
     def to_function_s
-      "#{function_name || 'constraint'}(#{vars.join(', ')})"
+      "#{function_name || 'constraint'}(#{vars.map(&:name).join(', ')})"
     end
 
     def to_s

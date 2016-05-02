@@ -1,55 +1,80 @@
 module Cbc
   class Problem
 
-    attr_reader :model
+    attr_accessor :model, :variable_index, :crs
 
-    def initialize(model, continuous: false)
+    def self.from_model(model, continuous: false)
+      crs = Util::CompressedRowStorage.from_model(model)
+      from_compressed_row_storage(crs, continuous: continuous)
+    end
 
+    def self.from_compressed_row_storage(crs, continuous: false)
+      new.tap do |p|
+        p.model = crs.model
+        p.variable_index = crs.variable_index
+        p.crs = crs
+        p.create_cbc_problem(continuous: continuous)
+      end
+    end
+
+    CCS = Struct.new(:col_ptr, :row_idx, :values) do
+      def nb_vars
+        col_ptr.size - 1
+      end
+    end
+
+    def self.crs_to_ccs(crs)
+      nb_per_column = Array.new(crs.col_idx.max.to_i + 1, 0)
+      nb_values = crs.values.size
+
+      crs.col_idx.each { |col_idx| nb_per_column[col_idx] += 1 }
+
+      ccs = CCS.new(Array.new(nb_per_column.size + 1), Array.new(nb_values), Array.new(nb_values))
+      ccs.col_ptr[0] = 0
+      idx = 0
+      while idx < nb_per_column.size
+        ccs.col_ptr[idx + 1] = ccs.col_ptr[idx] + nb_per_column[idx]
+        idx += 1
+      end
+
+      cols_idx = ccs.col_ptr.clone
+      row_idx = 0
+      end_row_idx = crs.row_ptr.size - 1
+      while row_idx < end_row_idx do
+        current_idx = crs.row_ptr[row_idx]
+        last_idx = crs.row_ptr[row_idx + 1] - 1
+        while current_idx <= last_idx do
+          col_idx = crs.col_idx[current_idx]
+          ccs_col_idx = cols_idx[col_idx]
+          cols_idx[col_idx] += 1
+          ccs.row_idx[ccs_col_idx] = row_idx
+          ccs.values[ccs_col_idx] = crs.values[current_idx]
+          current_idx += 1
+        end
+        row_idx += 1
+      end
+      ccs
+    end
+
+    def create_cbc_problem(continuous: false)
       @int_arrays = []
       @double_arrays = []
 
-      @model = model
-      @variables = {}
-      vars = model.vars
-      vars_data = {}
-      vars.each_with_index do |v, idx|
-        @variables[v] = idx
-        vars_data[v] = VarData.new(v, idx, [], [])
-      end
-
-      model.constraints.each_with_index do |c, idx|
-        c.terms.each do |term|
-          v_data = vars_data[term.var]
-          v_data.constraints << idx
-          v_data.coefs << term.mult
-        end
-      end
-
-      indexes = []
-      rows = []
-      coefs = []
-
-      vars.each_with_index do |v, idx|
-        v_data = vars_data[v]
-        indexes[idx] = rows.count
-        rows.concat v_data.constraints
-        coefs.concat v_data.coefs
-      end
-
-      indexes << rows.count
-
-      objective = Array.new(vars.count, 0)
+      ccs = self.class.crs_to_ccs(@crs)
+      objective = Array.new(ccs.nb_vars, 0)
       if model.objective
         model.objective.terms.each do |term|
-          objective[vars_data[term.var].col_idx] = term.mult
+          objective[@variable_index[term.var]] = term.mult
         end
       end
 
       @cbc_model = Cbc_wrapper.Cbc_newModel
-      Cbc_wrapper.Cbc_loadProblem(@cbc_model, model.vars.count, model.constraints.count,
-                                 to_int_array(indexes), to_int_array(rows),
-                                 to_double_array(coefs), nil, nil, to_double_array(objective),
-                                 nil, nil)
+      Cbc_wrapper.Cbc_loadProblem(
+        @cbc_model, ccs.nb_vars, @crs.nb_constraints,
+        to_int_array(ccs.col_ptr), to_int_array(ccs.row_idx),
+        to_double_array(ccs.values), nil, nil, to_double_array(objective),
+        nil, nil)
+
 
       # Segmentation errors when setting name
       # Cbc_wrapper.Cbc_setProblemName(@cbc_model, model.name) if model.name
@@ -59,18 +84,15 @@ module Cbc
         Cbc_wrapper.Cbc_setObjSense(@cbc_model, obj_sense)
       end
 
-      model.constraints.each_with_index do |c, idx|
-        case c.type
-        when Ilp::Constraint::LESS_OR_EQ
-          Cbc_wrapper.Cbc_setRowUpper(@cbc_model, idx, c.bound)
-        when Ilp::Constraint::GREATER_OR_EQ
-          Cbc_wrapper.Cbc_setRowLower(@cbc_model, idx, c.bound)
-        when Ilp::Constraint::EQUALS
-          Cbc_wrapper.Cbc_setRowUpper(@cbc_model, idx, c.bound)
-          Cbc_wrapper.Cbc_setRowLower(@cbc_model, idx, c.bound)
-        end
+      idx = 0
+      while idx < @crs.nb_constraints do
+        c = model.constraints[idx]
+        set_constraint_bounds(c, idx)
+        idx += 1
       end
-      model.vars.each_with_index do |v, idx|
+      idx = 0
+      while idx < ccs.nb_vars do
+        v = model.vars[idx]
         if continuous
           Cbc_wrapper.Cbc_setContinuous(@cbc_model, idx)
         else
@@ -83,14 +105,28 @@ module Cbc
         end
         Cbc_wrapper.Cbc_setColLower(@cbc_model, idx, v.lower_bound) unless v.lower_bound.nil?
         Cbc_wrapper.Cbc_setColUpper(@cbc_model, idx, v.upper_bound) unless v.upper_bound.nil?
+        idx += 1
       end
 
       ObjectSpace.define_finalizer(self, self.class.finalizer(@cbc_model, @int_arrays, @double_arrays))
 
       @default_solve_params = {
-          log: 0,
-        }
+        log: 0,
+      }
 
+
+    end
+
+    def set_constraint_bounds(c, idx)
+      case c.type
+      when Ilp::Constraint::LESS_OR_EQ
+        Cbc_wrapper.Cbc_setRowUpper(@cbc_model, idx, c.bound)
+      when Ilp::Constraint::GREATER_OR_EQ
+        Cbc_wrapper.Cbc_setRowLower(@cbc_model, idx, c.bound)
+      when Ilp::Constraint::EQUALS
+        Cbc_wrapper.Cbc_setRowUpper(@cbc_model, idx, c.bound)
+        Cbc_wrapper.Cbc_setRowLower(@cbc_model, idx, c.bound)
+      end
     end
 
     def solve(params = {})
@@ -99,10 +135,12 @@ module Cbc
       end
       Cbc_wrapper.Cbc_solve(@cbc_model)
       @solution = Cbc_wrapper::DoubleArray.frompointer(Cbc_wrapper.Cbc_getColSolution(@cbc_model))
+      @double_arrays << @solution
+      @solution
     end
 
     def value_of(var)
-      idx = @variables[var]
+      idx = @variable_index[var]
       return nil if idx.nil?
       if var.kind == Ilp::Var::CONTINUOUS_KIND
         @solution[idx]
@@ -141,7 +179,7 @@ module Cbc
     end
 
     def find_conflict
-      @conflict_set ||= ConflictSolver.new(model).find_conflict
+      @conflict_set ||= ConflictSolver.new(self).find_conflict
     end
 
     def find_conflict_vars
@@ -163,21 +201,25 @@ module Cbc
   private
 
     def to_int_array(array)
-      c_array = Cbc_wrapper::IntArray.new(array.count)
-      array.each_with_index { |value, idx| c_array[idx] = value }
+      c_array = Cbc_wrapper::IntArray.new(array.size)
+      idx = 0
+      while idx < array.size do
+        c_array[idx] = array[idx]
+        idx += 1
+      end
       @int_arrays << c_array
       c_array
     end
 
     def to_double_array(array)
-      c_array = Cbc_wrapper::DoubleArray.new(array.count)
-      array.each_with_index { |value, idx| c_array[idx] = value }
+      c_array = Cbc_wrapper::DoubleArray.new(array.size)
+      idx = 0
+      while idx < array.size do
+        c_array[idx] = array[idx]
+        idx += 1
+      end
       @double_arrays << c_array
       c_array
     end
-
-    VarData = Struct.new(:variable, :col_idx, :constraints, :coefs)
   end
-
-
 end
