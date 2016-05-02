@@ -25,6 +25,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake-compiler"
   spec.add_development_dependency "pry"
   spec.add_development_dependency "pry-byebug"
+  spec.add_development_dependency "benchmark-ips"
+  spec.add_development_dependency "ruby-prof"
 
   spec.add_dependency "cbc-wrapper", '~> 2.9.7.2'
 end

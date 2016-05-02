@@ -20,3 +20,7 @@ Rake::ExtensionTask.new('ruby-cbc', spec) do |ext|
 end
 
 task :default => [:spec]
+
+task :benchmark do
+  ruby "test/benchmark.rb"
+end
