@@ -55,7 +55,7 @@ module Cbc
 
         conflict_set_size = crs.nb_constraints - clusters[-1]
         puts "CLUSTERS #{clusters.inspect}"
-        puts "VARS #{crs.col_idx.uniq.size}"
+        # puts "VARS #{crs.col_idx.uniq.size}"
       end
       crs.model.constraints[0, conflict_set_size]
     end
