@@ -1,7 +1,7 @@
 module Util
   class CompressedRowStorage
 
-    attr_accessor :model, :variable_index, :row_start_idx, :col_idx, :values
+    attr_accessor :model, :variable_index, :row_ptr, :col_idx, :values
 
     def self.from_model(model)
       new.tap do |crs|
@@ -18,12 +18,12 @@ module Util
     end
 
     def nb_constraints
-      row_start_idx.count - 1
+      row_ptr.count - 1
     end
 
     def fill_matrix
       nb_values = model.constraints.map { |c| c.terms.count }.inject(:+) || 0
-      @row_start_idx = Array.new(model.constraints.count)
+      @row_ptr = Array.new(model.constraints.count)
       @col_idx = Array.new(nb_values)
       @values = Array.new(nb_values)
 
@@ -31,22 +31,22 @@ module Util
       c_idx = 0
       while c_idx < @model.constraints.size do
         constraint = @model.constraints[c_idx]
-        @row_start_idx[c_idx] = nb_cols
+        @row_ptr[c_idx] = nb_cols
         nb_insert = constraint.terms.count
         @col_idx[nb_cols, nb_insert] = constraint.terms.map { |term| variable_index[term.var] }
         @values[nb_cols, nb_insert] = constraint.terms.map { |term| term.mult }
         nb_cols += nb_insert
         c_idx += 1
       end
-      @row_start_idx << @col_idx.count
+      @row_ptr << @col_idx.count
     end
 
     def restrict_to_n_constraints(nb_constraints)
-      length_of_values = @row_start_idx[nb_constraints]
+      length_of_values = @row_ptr[nb_constraints]
       CompressedRowStorage.new.tap do |crs|
         crs.model = @model
         crs.variable_index = @variable_index
-        crs.row_start_idx = @row_start_idx[0, nb_constraints + 1]
+        crs.row_ptr = @row_ptr[0, nb_constraints + 1]
         crs.col_idx = @col_idx[0, length_of_values]
         crs.values = @values[0, length_of_values]
       end
@@ -60,15 +60,14 @@ module Util
       @model.constraints[0, constraints.count] = constraints
 
       # Move in the matrix
-      constraint_start_idx = @row_start_idx[range_idxs.min]
-      nb_vars = @row_start_idx[range_idxs.max + 1] - constraint_start_idx
-      puts "BIZARRE" if nb_vars.zero?
-      offset= @row_start_idx[range_idxs.min]
-      new_begin = @row_start_idx[range_idxs].map! { |idx| idx - offset }
+      constraint_start_idx = @row_ptr[range_idxs.min]
+      nb_vars = @row_ptr[range_idxs.max + 1] - constraint_start_idx
+      offset= @row_ptr[range_idxs.min]
+      new_begin = @row_ptr[range_idxs].map! { |idx| idx - offset }
       ((range_idxs.count)..(range_idxs.max)).reverse_each do |idx|
-        @row_start_idx[idx] = @row_start_idx[idx - range_idxs.count] + nb_vars
+        @row_ptr[idx] = @row_ptr[idx - range_idxs.count] + nb_vars
       end
-      @row_start_idx[0, range_idxs.count] = new_begin
+      @row_ptr[0, range_idxs.count] = new_begin
       move_block_to_start(@col_idx, constraint_start_idx, nb_vars)
       move_block_to_start(@values, constraint_start_idx, nb_vars)
     end

@@ -17,9 +17,9 @@ module Cbc
       end
     end
 
-    CCS = Struct.new(:col_start_idx, :row_idx, :values) do
+    CCS = Struct.new(:col_ptr, :row_idx, :values) do
       def nb_vars
-        col_start_idx.count - 1
+        col_ptr.count - 1
       end
     end
 
@@ -30,33 +30,29 @@ module Cbc
       crs.col_idx.each { |col_idx| nb_per_column[col_idx] += 1 }
 
       ccs = CCS.new(Array.new(nb_per_column.count + 1), Array.new(nb_values), Array.new(nb_values))
-      ccs.col_start_idx[0] = 0
+      ccs.col_ptr[0] = 0
       idx = 0
       while idx < nb_per_column.size
-        ccs.col_start_idx[idx + 1] = ccs.col_start_idx[idx] + nb_per_column[idx]
+        ccs.col_ptr[idx + 1] = ccs.col_ptr[idx] + nb_per_column[idx]
         idx += 1
       end
 
-      cols_idx = ccs.col_start_idx.clone
+      cols_idx = ccs.col_ptr.clone
       row_idx = 0
-      while row_idx < crs.row_start_idx.size - 1 do
-        from = crs.row_start_idx[row_idx]
-        to = crs.row_start_idx[row_idx + 1] - 1
-        (from..to).each do |idx|
-          col_idx = crs.col_idx[idx]
+      while row_idx < crs.row_ptr.size - 1 do
+        current_idx = crs.row_ptr[row_idx]
+        last_idx = crs.row_ptr[row_idx + 1] - 1
+        while current_idx <= last_idx do
+          col_idx = crs.col_idx[current_idx]
           ccs_col_idx = cols_idx[col_idx]
           cols_idx[col_idx] += 1
           ccs.row_idx[ccs_col_idx] = row_idx
-          ccs.values[ccs_col_idx] = crs.values[idx]
+          ccs.values[ccs_col_idx] = crs.values[current_idx]
+          current_idx += 1
         end
         row_idx += 1
       end
       ccs
-    end
-
-    def init_attributes
-      @int_arrays = []
-      @double_arrays = []
     end
 
     def create_cbc_problem(continuous: false)
@@ -74,7 +70,7 @@ module Cbc
       @cbc_model = Cbc_wrapper.Cbc_newModel
       Cbc_wrapper.Cbc_loadProblem(
         @cbc_model, ccs.nb_vars, @crs.nb_constraints,
-        to_int_array(ccs.col_start_idx), to_int_array(ccs.row_idx),
+        to_int_array(ccs.col_ptr), to_int_array(ccs.row_idx),
         to_double_array(ccs.values), nil, nil, to_double_array(objective),
         nil, nil)
 

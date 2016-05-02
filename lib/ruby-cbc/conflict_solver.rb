@@ -12,10 +12,10 @@ module Cbc
 
     # Assuming there is a conflict
     def find_conflict
-      continuous = is_continuous_conflict?
+      crs = Util::CompressedRowStorage.from_model(@model)
+      continuous = is_continuous_conflict?(crs)
       puts "continuous: #{continuous}"
       conflict_set = []
-      crs = Util::CompressedRowStorage.from_model(@model)
       max_iter = 4
       loop do
         range_are_all_of_size_1 = true
@@ -48,9 +48,9 @@ module Cbc
       conflict_set
     end
 
-    def is_continuous_conflict?
+    def is_continuous_conflict?(crs)
       # Same model without objective
-      problem = Problem.from_model(@model, continuous: true)
+      problem = Problem.from_compressed_row_storage(crs, continuous: true)
       infeasible?(problem)
     end
 
