@@ -19,17 +19,17 @@ module Cbc
 
     CCS = Struct.new(:col_ptr, :row_idx, :values) do
       def nb_vars
-        col_ptr.count - 1
+        col_ptr.size - 1
       end
     end
 
     def self.crs_to_ccs(crs)
       nb_per_column = Array.new(crs.col_idx.max.to_i + 1, 0)
-      nb_values = crs.values.count
+      nb_values = crs.values.size
 
       crs.col_idx.each { |col_idx| nb_per_column[col_idx] += 1 }
 
-      ccs = CCS.new(Array.new(nb_per_column.count + 1), Array.new(nb_values), Array.new(nb_values))
+      ccs = CCS.new(Array.new(nb_per_column.size + 1), Array.new(nb_values), Array.new(nb_values))
       ccs.col_ptr[0] = 0
       idx = 0
       while idx < nb_per_column.size
@@ -39,7 +39,8 @@ module Cbc
 
       cols_idx = ccs.col_ptr.clone
       row_idx = 0
-      while row_idx < crs.row_ptr.size - 1 do
+      end_row_idx = crs.row_ptr.size - 1
+      while row_idx < end_row_idx do
         current_idx = crs.row_ptr[row_idx]
         last_idx = crs.row_ptr[row_idx + 1] - 1
         while current_idx <= last_idx do
@@ -200,7 +201,7 @@ module Cbc
   private
 
     def to_int_array(array)
-      c_array = Cbc_wrapper::IntArray.new(array.count)
+      c_array = Cbc_wrapper::IntArray.new(array.size)
       idx = 0
       while idx < array.size do
         c_array[idx] = array[idx]
@@ -211,7 +212,7 @@ module Cbc
     end
 
     def to_double_array(array)
-      c_array = Cbc_wrapper::DoubleArray.new(array.count)
+      c_array = Cbc_wrapper::DoubleArray.new(array.size)
       idx = 0
       while idx < array.size do
         c_array[idx] = array[idx]

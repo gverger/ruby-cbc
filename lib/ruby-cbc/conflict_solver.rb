@@ -14,13 +14,12 @@ module Cbc
     def find_conflict
       crs = Util::CompressedRowStorage.from_model(@model)
       continuous = is_continuous_conflict?(crs)
-      puts "continuous: #{continuous}"
       conflict_set = []
       max_iter = 4
       loop do
         range_are_all_of_size_1 = true
         loop do
-          range_idxs = first_failing(conflict_set.count, crs, continuous: continuous, max_iterations: max_iter)
+          range_idxs = first_failing(conflict_set.size, crs, continuous: continuous, max_iterations: max_iter)
           return conflict_set if range_idxs.nil?
 
           range_are_all_of_size_1 &&= (range_idxs.count == 1)
@@ -31,13 +30,8 @@ module Cbc
           crs.move_constraint_to_start(range_idxs)
 
           # Check if conflict set is found
-          crs2 = crs.restrict_to_n_constraints(conflict_set.count)
+          crs2 = crs.restrict_to_n_constraints(conflict_set.size)
           problem = Problem.from_compressed_row_storage(crs2, continuous: continuous)
-          # m = Model.new
-          # m.vars = conflict_set.flat_map(&:vars).uniq
-          # m.constraints = conflict_set
-          # problem = Problem.from_model(m, continuous: continuous)
-          puts "infeasible?"
           break if infeasible?(problem)
 
         end
@@ -49,7 +43,6 @@ module Cbc
     end
 
     def is_continuous_conflict?(crs)
-      # Same model without objective
       problem = Problem.from_compressed_row_storage(crs, continuous: true)
       infeasible?(problem)
     end
@@ -62,7 +55,7 @@ module Cbc
 
       loop do
         unless max_iterations.nil?
-          return min_nb_constraints..([crs.nb_constraints, max_nb_constraints].min - 1) if max_iterations <= 0
+          return min_nb_constraints..([crs.nb_constraints - 1, max_nb_constraints].min - 1) if max_iterations <= 0
           max_iterations -= 1
         end
         half_constraints = (max_nb_constraints + min_nb_constraints) / 2
