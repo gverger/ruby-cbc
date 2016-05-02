@@ -86,13 +86,13 @@ module Cbc
 
       idx = 0
       while idx < @crs.nb_constraints do
-        c = model.constraints[idx]
+        c = @crs.model.constraints[idx]
         set_constraint_bounds(c, idx)
         idx += 1
       end
       idx = 0
       while idx < ccs.nb_vars do
-        v = model.vars[idx]
+        v = @crs.model.vars[idx]
         if continuous
           Cbc_wrapper.Cbc_setContinuous(@cbc_model, idx)
         else

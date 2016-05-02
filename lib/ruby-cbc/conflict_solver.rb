@@ -23,7 +23,6 @@ module Cbc
       loop do
         range_idxs = first_failing(conflict_set_size, crs, continuous: continuous, max_iterations: max_iter)
         break if range_idxs.nil?
-        puts "RANGE #{range_idxs}"
         crs = crs.restrict_to_n_constraints(range_idxs.max + 1)
         crs.move_constraint_to_start(range_idxs)
         clusters.insert(0, range_idxs.size)
@@ -34,7 +33,6 @@ module Cbc
         crs2 = crs.restrict_to_n_constraints(conflict_set_size)
         problem = Problem.from_compressed_row_storage(crs2, continuous: continuous)
         if infeasible?(problem)
-          puts "CONFLICT"
           clusters.delete_at(-1)
           break if clusters.size == conflict_set_size
 
@@ -54,8 +52,7 @@ module Cbc
         end
 
         conflict_set_size = crs.nb_constraints - clusters[-1]
-        puts "CLUSTERS #{clusters.inspect}"
-        puts "VARS #{crs.col_idx.uniq.size}"
+        # puts "CLUSTERS #{clusters.inspect}"
       end
       crs.model.constraints[0, conflict_set_size]
     end
@@ -77,18 +74,18 @@ module Cbc
           max_iterations -= 1
         end
         half_constraint_idx = (max_idx + min_idx) / 2
-        puts "Refining: [#{min_idx}:#{max_idx}] -> #{half_constraint_idx}"
+        # puts "Refining: [#{min_idx}:#{max_idx}] -> #{half_constraint_idx}"
         crs2 = crs.restrict_to_n_constraints(half_constraint_idx + 1)
         problem = Problem.from_compressed_row_storage(crs2, continuous: continuous)
         if infeasible?(problem)
           max_idx = half_constraint_idx
-          puts "                                INFEAS"
+          # puts "                                INFEAS"
         else
           min_idx = half_constraint_idx + 1
-          puts "                                FEAS"
+          # puts "                                FEAS"
         end
         if max_idx == min_idx
-          puts "found: max = #{max_idx} min = #{min_idx} nb = #{crs.nb_constraints}"
+          # puts "found: max = #{max_idx} min = #{min_idx} nb = #{crs.nb_constraints}"
           return nil if max_idx > crs.nb_constraints
           return min_idx..max_idx
         end
