@@ -1,7 +1,5 @@
 module Cbc
-
   class ConflictSolver
-
     def initialize(problem)
       # clone the model minus the objective
       @model = Model.new
@@ -12,7 +10,7 @@ module Cbc
 
     def find_conflict
       crs = Util::CompressedRowStorage.from_model(@model)
-      continuous = is_continuous_conflict?(crs)
+      continuous = continuous_conflict?(crs)
       unless continuous
         p = Problem.from_compressed_row_storage(crs, continuous: false)
         return [] unless infeasible?(p)
@@ -57,12 +55,13 @@ module Cbc
       crs.model.constraints[0, conflict_set_size]
     end
 
-    def is_continuous_conflict?(crs)
+    def continuous_conflict?(crs)
       problem = Problem.from_compressed_row_storage(crs, continuous: true)
       infeasible?(problem)
     end
 
-  private
+    private
+
     # finds the first constraint from constraints that makes the problem infeasible
     def first_failing(conflict_set_size, crs, continuous: false, max_iterations: nil)
       min_idx = conflict_set_size
