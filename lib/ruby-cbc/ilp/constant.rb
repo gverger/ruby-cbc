@@ -2,35 +2,40 @@ module Ilp
   class Constant
     attr_accessor :value
     def initialize(value)
-      raise ArgumentError, 'Argument is not numeric' unless value.is_a? Numeric
+      raise ArgumentError, "Argument is not numeric" unless value.is_a? Numeric
       @value = value
     end
-    def <= (term)
-      term >= value
-    end
-    def <(term)
-      term > value
-    end
-    def >=(term)
-      term <= value
-    end
-    def > (term)
-      term < value
-    end
-    def ==(term)
-      term == value
+
+    def <=(other)
+      other >= value
     end
 
-    def *(term)
-      term * value
-    end
-    
-    def +(term)
-      term + value
+    def <(other)
+      other > value
     end
 
-    def -(term)
-      -1 * term + value
+    def >=(other)
+      other <= value
+    end
+
+    def >(other)
+      other < value
+    end
+
+    def ==(other)
+      other == value
+    end
+
+    def *(other)
+      other * value
+    end
+
+    def +(other)
+      other + value
+    end
+
+    def -(other)
+      -1 * other + value
     end
 
     def to_s

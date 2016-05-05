@@ -1,6 +1,5 @@
 module Ilp
   class Constraint
-
     LESS_OR_EQ = :less_or_eq
     GREATER_OR_EQ = :greater_or_eq
     EQUALS = :equals
@@ -15,26 +14,22 @@ module Ilp
     end
 
     def vars
-      terms.vars.uniq
+      terms.vars
     end
 
     def to_function_s
-      "#{function_name || 'constraint'}(#{vars.map(&:name).join(', ')})"
+      "#{function_name || 'constraint'}(#{vars.map!(&:name).join(', ')})"
     end
+
+    SIGN_TO_STRING = {
+      LESS_OR_EQ => "<=",
+      GREATER_OR_EQ => ">=",
+      EQUALS => "=="
+    }
 
     def to_s
-      case @type
-      when LESS_OR_EQ
-        sign = '<='
-      when GREATER_OR_EQ
-        sign = '>='
-      when EQUALS
-        sign = '='
-      else
-        sign = '??'
-      end
-      "#{@terms.to_s} #{sign} #{@bound}"
+      sign = SIGN_TO_STRING(@type) || "??"
+      "#{@terms} #{sign} #{@bound}"
     end
-
   end
 end
