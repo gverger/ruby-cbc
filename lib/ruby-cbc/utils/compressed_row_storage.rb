@@ -16,7 +16,7 @@ module Cbc
       end
 
       def make_variable_index
-        indexes = Array(0..(model.vars.size - 1)).to_a
+        indexes = @model.vars.size.times.to_a
         @variable_index = model.vars.zip(indexes).to_h
       end
 
@@ -63,10 +63,10 @@ module Cbc
 
       def new_indexes
         present = present_var_indexes
-        return nil if present.size == @variable_index.size
+        return nil if present.all?
         new_idx = Array.new(@variable_index.size, -1)
         current_index = 0
-        (O..(new_idx.size - 1)).each do |idx|
+        new_idx.size.times.each do |idx|
           next unless present[idx]
           new_idx[idx] = current_index
           current_index += 1
@@ -74,14 +74,20 @@ module Cbc
         new_idx
       end
 
-      def delete_missing_vars
-        new_idx = new_indexes or return
-
+      def change_indexes(new_idx)
         new_variable_index = {}
         @variable_index.each do |v, i|
           new_variable_index[v] = new_idx[i] if new_idx[i] != -1
         end
         @variable_index = new_variable_index
+      end
+
+      def delete_missing_vars
+        new_idx = new_indexes
+        return if new_idx.nil?
+
+        change_indexes(new_idx)
+
         @col_idx.map! { |i| new_idx[i] }
         @model.vars = Array.new(@variable_index.size)
         @variable_index.each { |var, i| @model.vars[i] = var }
