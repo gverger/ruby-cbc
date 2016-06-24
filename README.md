@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/gverger/ruby-cbc.svg?branch=master)](https://travis-ci.org/gverger/ruby-cbc)
 # Ruby-Cbc
 
 This gem is using Cbc, an Integer Linear Programming Library, to provide optimization problems solving
