@@ -1,86 +1,87 @@
 module Ilp
   class TermArray
-    include Enumerable
+    extend Forwardable
 
     attr_accessor :terms
+    def_delegators :@terms, :map, :each, :size
 
     def initialize(terms)
       @terms = terms
     end
 
-    def +(vars)
+    def +(other)
       new_terms = terms.dup
-      if vars.is_a? Numeric
-        new_terms << vars
-      elsif vars.is_a? Ilp::Var
-        new_terms << Ilp::Term.new(vars)
-      elsif vars.is_a? Ilp::Term
-        new_terms << vars
-      elsif vars.is_a? Ilp::TermArray
-        new_terms.concat(vars.terms)
+      case other
+      when Numeric
+        new_terms << other
+      when Ilp::Var
+        new_terms << Ilp::Term.new(other)
+      when Ilp::Term
+        new_terms << other
+      when Ilp::TermArray
+        new_terms.concat(other.terms)
       else
-        raise ArgumentError, "Argument is not allowed: #{vars} of type #{vars.class}"
+        raise ArgumentError, "Argument is not allowed: #{other} of type #{other.class}"
       end
       TermArray.new(new_terms)
     end
 
-    def -(vars)
-      self + -1 * vars
+    def -(other)
+      self + -1 * other
     end
 
-    def *(mult)
-      raise ArgumentError, 'Argument is not numeric' unless mult.is_a? Numeric
-      new_terms = terms.map { |term| term * mult }
+    def *(other)
+      raise ArgumentError, 'Argument is not numeric' unless other.is_a? Numeric
+      new_terms = terms.map { |term| term * other }
       TermArray.new(new_terms)
     end
 
     # cste + nb * var + nb * var...
     def normalize!
-      constant = @terms.select{ |t| t.is_a? Numeric }.reduce(:+)
-      hterms = @terms.select{ |t| t.is_a? Ilp::Term }.group_by(&:var)
-      @terms = []
-      constant ||= 0
-      @terms << constant
-      reduced = hterms.map do |v, ts|
-        if ts.count == 1
-          ts.first
-        else
-          ts.reduce(Ilp::Term.new(v, 0)) { |v1, v2| v1.mult += v2.mult; v1 }
+      constant = 0
+      hterms = {}
+      @terms.each do |term|
+        case term
+        when Numeric
+          constant += term
+        when Ilp::Term
+          v = term.var
+          hterms[v] ||= Ilp::Term.new(v, 0)
+          hterms[v].mult += term.mult
         end
-      end.reject { |term| term.mult == 0 }
-      @terms.concat reduced
+      end
+      reduced = hterms.map { |_, term| term unless term.mult.zero? }
+      reduced.compact!
+      @terms = [constant].concat reduced
       self
     end
 
-    def <=(value)
-      Ilp::Constraint.new(self, Ilp::Constraint::LESS_OR_EQ, value)
+    def <=(other)
+      Ilp::Constraint.new(self, Ilp::Constraint::LESS_OR_EQ, other)
     end
 
-    def >=(value)
-      Ilp::Constraint.new(self, Ilp::Constraint::GREATER_OR_EQ, value)
+    def >=(other)
+      Ilp::Constraint.new(self, Ilp::Constraint::GREATER_OR_EQ, other)
     end
 
-    def ==(value)
-      Ilp::Constraint.new(self, Ilp::Constraint::EQUALS, value)
+    def ==(other)
+      Ilp::Constraint.new(self, Ilp::Constraint::EQUALS, other)
     end
 
     def coerce(value)
       [Ilp::Constant.new(value), self]
     end
 
-    def each(&block)
-      @terms.each(&block)
-    end
-
     def to_s
-      @terms.map(&:to_s).join(' ')
+      @terms.map(&:to_s).join(" ")
     end
 
     def vars
       @terms.map(&:var)
     end
 
-  private
+    private
+
     # Must be normalized!
     def pop_constant
       terms.slice!(0)

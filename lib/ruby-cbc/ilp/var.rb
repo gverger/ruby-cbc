@@ -9,7 +9,7 @@ module Ilp
     def initialize(name: nil, kind: INTEGER_KIND, lower_bound: nil, upper_bound: nil)
       @kind = kind
       @name = name
-      @name = ('a'..'z').to_a.shuffle[0,8].join if name.nil?
+      @name = ("a".."z").to_a.sample(8).join if name.nil?
       @lower_bound = lower_bound
       @upper_bound = upper_bound
     end
@@ -23,32 +23,32 @@ module Ilp
       @lower_bound..@upper_bound
     end
 
-    def +(vars)
-      Ilp::Term.new(self) + vars
+    def +(other)
+      Ilp::Term.new(self) + other
     end
 
-    def -(vars)
-      Ilp::Term.new(self) - vars
+    def -(other)
+      Ilp::Term.new(self) - other
     end
 
     def -@
       Ilp::Term.new(self, -1)
     end
 
-    def *(mult)
-      Ilp::Term.new(self) * mult
+    def *(other)
+      Ilp::Term.new(self) * other
     end
 
-    def ==(vars)
-      Ilp::Term.new(self) == vars
+    def ==(other)
+      Ilp::Term.new(self) == other
     end
 
-    def <=(vars)
-      Ilp::Term.new(self) <= vars
+    def <=(other)
+      Ilp::Term.new(self) <= other
     end
 
-    def >=(vars)
-      Ilp::Term.new(self) >= vars
+    def >=(other)
+      Ilp::Term.new(self) >= other
     end
 
     def coerce(num)

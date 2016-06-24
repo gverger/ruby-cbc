@@ -1,6 +1,5 @@
 module Cbc
   class Problem
-
     attr_accessor :model, :variable_index, :crs
 
     def self.from_model(model, continuous: false)
@@ -40,10 +39,10 @@ module Cbc
       cols_idx = ccs.col_ptr.clone
       row_idx = 0
       end_row_idx = crs.row_ptr.size - 1
-      while row_idx < end_row_idx do
+      while row_idx < end_row_idx
         current_idx = crs.row_ptr[row_idx]
         last_idx = crs.row_ptr[row_idx + 1] - 1
-        while current_idx <= last_idx do
+        while current_idx <= last_idx
           col_idx = crs.col_idx[current_idx]
           ccs_col_idx = cols_idx[col_idx]
           cols_idx[col_idx] += 1
@@ -75,7 +74,6 @@ module Cbc
         to_double_array(ccs.values), nil, nil, to_double_array(objective),
         nil, nil)
 
-
       # Segmentation errors when setting name
       # Cbc_wrapper.Cbc_setProblemName(@cbc_model, model.name) if model.name
 
@@ -85,13 +83,13 @@ module Cbc
       end
 
       idx = 0
-      while idx < @crs.nb_constraints do
+      while idx < @crs.nb_constraints
         c = @crs.model.constraints[idx]
         set_constraint_bounds(c, idx)
         idx += 1
       end
       idx = 0
-      while idx < ccs.nb_vars do
+      while idx < ccs.nb_vars
         v = @crs.model.vars[idx]
         if continuous
           Cbc_wrapper.Cbc_setContinuous(@cbc_model, idx)
@@ -111,10 +109,8 @@ module Cbc
       ObjectSpace.define_finalizer(self, self.class.finalizer(@cbc_model, @int_arrays, @double_arrays))
 
       @default_solve_params = {
-        log: 0,
+        log: 0
       }
-
-
     end
 
     def set_constraint_bounds(c, idx)
@@ -198,12 +194,12 @@ module Cbc
       Cbc_wrapper.Cbc_writeMps(@cbc_model, "test")
     end
 
-  private
+    private
 
     def to_int_array(array)
       c_array = Cbc_wrapper::IntArray.new(array.size)
       idx = 0
-      while idx < array.size do
+      while idx < array.size
         c_array[idx] = array[idx]
         idx += 1
       end
@@ -214,7 +210,7 @@ module Cbc
     def to_double_array(array)
       c_array = Cbc_wrapper::DoubleArray.new(array.size)
       idx = 0
-      while idx < array.size do
+      while idx < array.size
         c_array[idx] = array[idx]
         idx += 1
       end

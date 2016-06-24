@@ -1,6 +1,5 @@
 module Ilp
   class Term
-
     attr_accessor :mult, :var
 
     def initialize(var, mult = 1)
@@ -8,30 +7,29 @@ module Ilp
       @var = var
     end
 
-    def +(vars)
-      Ilp::TermArray.new([self]) + vars
+    def +(other)
+      Ilp::TermArray.new([self]) + other
     end
 
-    def -(vars)
-      Ilp::TermArray.new([self]) - vars
+    def -(other)
+      Ilp::TermArray.new([self]) - other
     end
 
-    def ==(vars)
-      Ilp::TermArray.new([self]) == vars
+    def ==(other)
+      Ilp::TermArray.new([self]) == other
     end
 
-    def <=(vars)
-      Ilp::TermArray.new([self]) <= vars
+    def <=(other)
+      Ilp::TermArray.new([self]) <= other
     end
 
-    def >=(vars)
-      Ilp::TermArray.new([self]) >= vars
+    def >=(other)
+      Ilp::TermArray.new([self]) >= other
     end
 
-
-    def *(mult)
-      raise ArgumentError, 'Argument is not numeric' unless mult.is_a? Numeric
-      Ilp::Term.new(@var, @mult * mult)
+    def *(other)
+      raise ArgumentError, "Argument is not numeric" unless other.is_a? Numeric
+      Ilp::Term.new(@var, @mult * other)
     end
 
     def coerce(num)
