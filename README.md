@@ -121,7 +121,7 @@ a1 * x1 + a2 * x2 + ... + an * xn == C
 
 With Ruby-Cbc you can write
 ```ruby
-2 * (2 + 5 * x) + 4 * 5 + 1 == 1 + 4 * 5
+2 * (2 + 5 * x) + 4 * 5 + 1 == 1 + 4 * 5 * y
 ```
 The (in)equation must still be a **linear** (in)equation, you cannot multiply two variables !
 
