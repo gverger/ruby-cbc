@@ -56,7 +56,7 @@ module Ilp
     end
 
     def to_s
-      name
+      name.to_s
     end
   end
 end
