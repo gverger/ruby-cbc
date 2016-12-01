@@ -28,5 +28,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "benchmark-ips"
   spec.add_development_dependency "ruby-prof"
 
-  spec.add_dependency "cbc-wrapper", '~> 2.9.7.2'
+  spec.add_dependency "cbc-wrapper", '~> 2.9.7.3'
 end
