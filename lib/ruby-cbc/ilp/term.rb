@@ -1,6 +1,6 @@
 module Ilp
   class Term
-    attr_accessor :mult, :var
+    attr_reader :mult, :var
 
     def initialize(var, mult = 1)
       @mult = mult
@@ -25,6 +25,12 @@ module Ilp
 
     def >=(other)
       Ilp::TermArray.new([self]) >= other
+    end
+
+    def combine_in(other_term)
+      return Term.new(var, mult) if other_term.nil?
+      other_term.mult += mult
+      other_term
     end
 
     def *(other)
