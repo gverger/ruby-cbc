@@ -150,4 +150,12 @@ describe Cbc do
       expect(p.value_of(var)).to eq(value)
     end
   end
+
+  it "can be printed" do
+    m = Cbc::Model.new
+    x = m.int_var(name: "x")
+    m.enforce(2 * x <= 4)
+    m.maximize(x * 3)
+    expect(m.to_s).to eq "Maximize\n  + 3 x\n\nSubject To\n  + 2 x <= 4\n\nBounds\n  -inf <= x <= +inf\n\nGenerals\n  x\n\nEnd\n"
+  end
 end

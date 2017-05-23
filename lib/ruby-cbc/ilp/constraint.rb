@@ -28,7 +28,7 @@ module Ilp
     }
 
     def to_s
-      sign = SIGN_TO_STRING(@type) || "??"
+      sign = SIGN_TO_STRING[@type] || "??"
       "#{@terms} #{sign} #{@bound}"
     end
   end
