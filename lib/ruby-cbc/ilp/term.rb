@@ -1,6 +1,7 @@
 module Ilp
   class Term
-    attr_accessor :mult, :var
+    attr_reader :var
+    attr_accessor :mult
 
     def initialize(var, mult = 1)
       @mult = mult
@@ -25,6 +26,13 @@ module Ilp
 
     def >=(other)
       Ilp::TermArray.new([self]) >= other
+    end
+
+    def combine_in(other_term)
+      return Term.new(var, mult) unless other_term
+      raise "Terms cannot be combined: #{self} and #{other_term}" unless var.equal? other_term.var
+      other_term.mult += mult
+      other_term
     end
 
     def *(other)
