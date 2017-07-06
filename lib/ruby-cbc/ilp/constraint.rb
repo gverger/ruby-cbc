@@ -24,7 +24,7 @@ module Ilp
     SIGN_TO_STRING = {
       LESS_OR_EQ => "<=",
       GREATER_OR_EQ => ">=",
-      EQUALS => "=="
+      EQUALS => "="
     }
 
     def to_s
