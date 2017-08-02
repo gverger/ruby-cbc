@@ -4,7 +4,8 @@ module Ilp
     GREATER_OR_EQ = :greater_or_eq
     EQUALS = :equals
 
-    attr_accessor :terms, :type, :bound, :function_name
+    attr_reader :terms, :type, :bound
+    attr_accessor :function_name
 
     def initialize(terms, type, bound)
       @terms = terms - bound
@@ -24,7 +25,7 @@ module Ilp
     SIGN_TO_STRING = {
       LESS_OR_EQ => "<=",
       GREATER_OR_EQ => ">=",
-      EQUALS => "=="
+      EQUALS => "="
     }
 
     def to_s

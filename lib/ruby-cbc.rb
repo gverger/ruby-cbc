@@ -9,7 +9,6 @@ files = %w(
   model
   problem
   version
-  ilp/constant
   ilp/constraint
   ilp/objective
   ilp/term
