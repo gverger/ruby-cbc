@@ -4,7 +4,7 @@
 This gem is using Cbc, an Integer Linear Programming Library, to provide optimization problems solving
 to ruby. With Ruby-Cbc, you can model you problem, solve it and find conflicts in case of infeasibility.
 
-It uses the version 2.9.7 of Cbc, and requires the version 2.9.7 of gem cbc-wrapper.
+It uses the version 2.9.9 of Cbc, and requires the version 2.9.9 of gem cbc-wrapper.
 
 ## Installation
 
