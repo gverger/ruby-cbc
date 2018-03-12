@@ -52,7 +52,7 @@ module Ilp
     end
 
     def coerce(num)
-      [Ilp::Term.new(self), num]
+      [Ilp::Constant.new(num), self]
     end
 
     def to_s

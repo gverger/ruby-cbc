@@ -33,7 +33,7 @@ module Ilp
     end
 
     def coerce(num)
-      [Ilp::TermArray.new([self]), num]
+      [Ilp::Constant.new(num), Ilp::TermArray.new([self])]
     end
 
     def to_s
