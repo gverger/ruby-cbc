@@ -1,7 +1,6 @@
 module Ilp
   class Term
-    attr_reader :var
-    attr_accessor :mult
+    attr_accessor :mult, :var
 
     def initialize(var, mult = 1)
       @mult = mult
@@ -28,20 +27,13 @@ module Ilp
       Ilp::TermArray.new([self]) >= other
     end
 
-    def combine_in(other_term)
-      return Term.new(var, mult) unless other_term
-      raise "Terms cannot be combined: #{self} and #{other_term}" unless var.equal? other_term.var
-      other_term.mult += mult
-      other_term
-    end
-
     def *(other)
       raise ArgumentError, "Argument is not numeric" unless other.is_a? Numeric
       Ilp::Term.new(@var, @mult * other)
     end
 
     def coerce(num)
-      [Ilp::TermArray.new([self]), num]
+      [Ilp::Constant.new(num), Ilp::TermArray.new([self])]
     end
 
     def to_s

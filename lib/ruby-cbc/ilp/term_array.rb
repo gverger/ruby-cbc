@@ -2,7 +2,7 @@ module Ilp
   class TermArray
     extend Forwardable
 
-    attr_reader :terms
+    attr_accessor :terms
     def_delegators :@terms, :map, :each, :size
 
     def initialize(terms)
@@ -45,8 +45,9 @@ module Ilp
         when Numeric
           constant += term
         when Ilp::Term
-          variable = term.var
-          hterms[variable] = term.combine_in(hterms[variable])
+          v = term.var
+          hterms[v] ||= Ilp::Term.new(v, 0)
+          hterms[v].mult += term.mult
         end
       end
       reduced = hterms.map { |_, term| term unless term.mult.zero? }
@@ -68,7 +69,7 @@ module Ilp
     end
 
     def coerce(value)
-      [value, self]
+      [Ilp::Constant.new(value), self]
     end
 
     def to_s

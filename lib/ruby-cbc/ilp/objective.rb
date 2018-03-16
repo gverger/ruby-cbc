@@ -3,7 +3,7 @@ module Ilp
     MINIMIZE = :min
     MAXIMIZE = :max
 
-    attr_reader :terms, :objective_function
+    attr_accessor :terms, :objective_function
     def initialize(terms, objective_function = MAXIMIZE)
       @terms = terms
       @terms = Ilp::Term.new(@terms) if @terms.is_a? Ilp::Var
