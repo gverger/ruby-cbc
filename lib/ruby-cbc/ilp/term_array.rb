@@ -1,3 +1,5 @@
+require 'forwardable'
+
 module Ilp
   class TermArray
     extend Forwardable
