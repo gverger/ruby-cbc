@@ -69,10 +69,18 @@ module Cbc
 
       @cbc_model = Cbc_wrapper.Cbc_newModel
       Cbc_wrapper.Cbc_loadProblem(
-        @cbc_model, ccs.nb_vars, @crs.nb_constraints,
-        to_int_array(ccs.col_ptr), to_int_array(ccs.row_idx),
-        to_double_array(ccs.values), nil, nil, to_double_array(objective),
-        nil, nil)
+        @cbc_model,
+        ccs.nb_vars,
+        @crs.nb_constraints,
+        to_int_array(ccs.col_ptr),
+        to_int_array(ccs.row_idx),
+        to_double_array(ccs.values),
+        nil,
+        nil,
+        to_double_array(objective),
+        nil,
+        nil
+      )
 
       # Segmentation errors when setting name
       # Cbc_wrapper.Cbc_setProblemName(@cbc_model, model.name) if model.name
@@ -106,22 +114,21 @@ module Cbc
         idx += 1
       end
 
-      ObjectSpace.define_finalizer(self, self.class.finalizer(@cbc_model, @int_arrays, @double_arrays))
+      ObjectSpace.define_finalizer(self,
+                                   self.class.finalizer(@cbc_model, @int_arrays, @double_arrays))
 
-      @default_solve_params = {
-        log: 0
-      }
+      @default_solve_params = { log: 0 }
     end
 
-    def set_constraint_bounds(c, idx)
-      case c.type
+    def set_constraint_bounds(constraint, idx)
+      case constraint.type
       when Ilp::Constraint::LESS_OR_EQ
-        Cbc_wrapper.Cbc_setRowUpper(@cbc_model, idx, c.bound)
+        Cbc_wrapper.Cbc_setRowUpper(@cbc_model, idx, constraint.bound)
       when Ilp::Constraint::GREATER_OR_EQ
-        Cbc_wrapper.Cbc_setRowLower(@cbc_model, idx, c.bound)
+        Cbc_wrapper.Cbc_setRowLower(@cbc_model, idx, constraint.bound)
       when Ilp::Constraint::EQUALS
-        Cbc_wrapper.Cbc_setRowUpper(@cbc_model, idx, c.bound)
-        Cbc_wrapper.Cbc_setRowLower(@cbc_model, idx, c.bound)
+        Cbc_wrapper.Cbc_setRowUpper(@cbc_model, idx, constraint.bound)
+        Cbc_wrapper.Cbc_setRowLower(@cbc_model, idx, constraint.bound)
       end
     end
 
@@ -145,9 +152,12 @@ module Cbc
       end
     end
 
+    # Keep this one for back compatibility
+    # rubocop:disable Naming/AccessorMethodName
     def set_time_limit(seconds)
       @default_solve_params[:sec] = seconds
     end
+    # rubocop:enable Naming/AccessorMethodName
 
     def proven_optimal?
       Cbc_wrapper.Cbc_isProvenOptimal(@cbc_model) == 1
@@ -175,11 +185,11 @@ module Cbc
     end
 
     def find_conflict
-      @conflict_set ||= ConflictSolver.new(self).find_conflict
+      @find_conflict ||= ConflictSolver.new(self).find_conflict
     end
 
     def find_conflict_vars
-      @conflict_vars ||= find_conflict.map(&:vars).flatten.uniq
+      @find_conflict_vars ||= find_conflict.map(&:vars).flatten.uniq
     end
 
     def self.finalizer(cbc_model, int_arrays, double_arrays)

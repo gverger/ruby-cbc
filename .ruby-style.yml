@@ -1,0 +1,14 @@
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Metrics/LineLength:
+  Exclude:
+    - ruby-cbc.gemspec
+  Max: 100
+
+Metrics/BlockLength:
+  Exclude:
+    - spec/*
+
+Layout/IndentHeredoc:
+  Enabled: false

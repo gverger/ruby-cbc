@@ -1,26 +1,26 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe "Terms and vars" do
   let(:model) { Cbc::Model.new }
-  let(:x) { model.int_var(name: 'x') }
-  let(:y) { model.int_var(name: 'y') }
+  let(:x) { model.int_var(name: "x") }
+  let(:y) { model.int_var(name: "y") }
   let(:problem) { model.to_problem }
 
   ## Assertions...
 
   def objective?(expected)
-    expect(model.objective.to_s.gsub(/\s+/, ' ').strip).to eq(expected)
+    expect(model.objective.to_s.gsub(/\s+/, " ").strip).to eq(expected)
   end
 
   def constraints?(*expected)
     expect(model.constraints.map(&:to_s)).to match_array(expected)
   end
 
-  def optimal?(h)
+  def optimal?(partial_solution)
     problem.solve
     expect(problem).to be_proven_optimal
 
-    h.each do |var, expected_value|
+    partial_solution.each do |var, expected_value|
       expect(problem.value_of(var)).to eq(expected_value)
     end
   end
@@ -116,12 +116,11 @@ describe "Terms and vars" do
     end
 
     specify "const - term <= const" do
-      expect((3 - (4*x) <= 14).to_s).to eq("- 4 x <= 11")
+      expect((3 - (4 * x) <= 14).to_s).to eq("- 4 x <= 11")
     end
 
     specify "const - termarray <= const" do
-      expect((3 - (4 * x + 4) <= 14).to_s).to eq('- 4 x <= 15')
+      expect((3 - (4 * x + 4) <= 14).to_s).to eq("- 4 x <= 15")
     end
   end
-
 end

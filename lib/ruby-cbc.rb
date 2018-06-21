@@ -4,7 +4,7 @@ require "cbc-wrapper"
 module Cbc
 end
 
-files = %w(
+files = %w[
   conflict_solver
   model
   problem
@@ -16,7 +16,7 @@ files = %w(
   ilp/term_array
   ilp/var
   utils/compressed_row_storage
-)
+]
 
 files.each do |file|
   require File.expand_path("../ruby-cbc/#{file}", __FILE__)

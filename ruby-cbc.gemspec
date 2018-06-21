@@ -1,7 +1,6 @@
-# coding: utf-8
-lib = File.expand_path('../lib', __FILE__)
+lib = File.expand_path("lib", __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'ruby-cbc/version'
+require "ruby-cbc/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "ruby-cbc"
@@ -30,5 +29,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rubocop-rspec"
   spec.add_development_dependency "ruby-prof"
 
-  spec.add_dependency "cbc-wrapper", '~> 2.9.9.2'
+  spec.add_dependency "cbc-wrapper", "~> 2.9.9.2"
 end
