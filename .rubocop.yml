@@ -1,1 +1,3 @@
-inherit_from: ".ruby-style.yml"
+inherit_from:
+  - .rubocop_todo.yml
+  - .ruby-style.yml

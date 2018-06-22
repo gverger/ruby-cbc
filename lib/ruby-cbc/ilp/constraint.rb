@@ -25,7 +25,7 @@ module Ilp
       LESS_OR_EQ => "<=",
       GREATER_OR_EQ => ">=",
       EQUALS => "="
-    }
+    }.freeze
 
     def to_s
       sign = SIGN_TO_STRING[@type] || "??"

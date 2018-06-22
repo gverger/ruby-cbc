@@ -19,7 +19,8 @@ module Cbc
       max_iter = 1
       conflict_set_size = 0
       loop do
-        range_idxs = first_failing(conflict_set_size, crs, continuous: continuous, max_iterations: max_iter)
+        range_idxs =
+          first_failing(conflict_set_size, crs, continuous: continuous, max_iterations: max_iter)
         break if range_idxs.nil?
         crs = crs.restrict_to_n_constraints(range_idxs.max + 1)
         crs.move_constraint_to_start(range_idxs)
@@ -43,7 +44,9 @@ module Cbc
           nb_clusters_one_constraint += 1
         end
         if nb_clusters_one_constraint > 0
-          crs.move_constraint_to_start((crs.nb_constraints - nb_clusters_one_constraint)..(crs.nb_constraints - 1))
+          crs.move_constraint_to_start(
+            (crs.nb_constraints - nb_clusters_one_constraint)..(crs.nb_constraints - 1)
+          )
           clusters[nb_clusters_one_constraint, clusters.size - nb_clusters_one_constraint] =
             clusters[0, clusters.size - nb_clusters_one_constraint]
           clusters[0, nb_clusters_one_constraint] = Array.new(nb_clusters_one_constraint, 1)
@@ -83,14 +86,12 @@ module Cbc
           min_idx = half_constraint_idx + 1
           # puts "                                FEAS"
         end
-        if max_idx == min_idx
-          # puts "found: max = #{max_idx} min = #{min_idx} nb = #{crs.nb_constraints}"
-          return nil if max_idx > crs.nb_constraints
-          return min_idx..max_idx
-        end
+        next if max_idx != min_idx
+        return nil if max_idx > crs.nb_constraints
+        return min_idx..max_idx
       end
       # Shouldn't come here if the whole problem is infeasible
-      return nil
+      nil
     end
 
     def infeasible?(problem)

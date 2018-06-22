@@ -1,7 +1,6 @@
-# coding: utf-8
-lib = File.expand_path('../lib', __FILE__)
+lib = File.expand_path("lib", __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'ruby-cbc/version'
+require "ruby-cbc/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "ruby-cbc"
@@ -19,14 +18,16 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
+  spec.add_development_dependency "benchmark-ips"
   spec.add_development_dependency "bundler", "~> 1.10"
-  spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_development_dependency "rspec"
-  spec.add_development_dependency "rake-compiler"
   spec.add_development_dependency "pry"
   spec.add_development_dependency "pry-byebug"
-  spec.add_development_dependency "benchmark-ips"
+  spec.add_development_dependency "rake", "~> 10.0"
+  spec.add_development_dependency "rake-compiler"
+  spec.add_development_dependency "rspec"
+  spec.add_development_dependency "rubocop"
+  spec.add_development_dependency "rubocop-rspec"
   spec.add_development_dependency "ruby-prof"
 
-  spec.add_dependency "cbc-wrapper", '~> 2.9.9.2'
+  spec.add_dependency "cbc-wrapper", "~> 2.9.9.2"
 end

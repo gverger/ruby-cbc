@@ -91,7 +91,7 @@ module Cbc
       constraints.each do |cons|
         str << "  #{cons}\n"
       end
-      bounded_vars = vars.select { |v| v.kind != Ilp::Var::BINARY_KIND }
+      bounded_vars = vars.reject { |v| v.kind == Ilp::Var::BINARY_KIND }
       unless bounded_vars.empty?
         str << "\nBounds\n"
         bounded_vars.each do |v|
@@ -133,16 +133,16 @@ module Cbc
       v
     end
 
-    def lb_to_s(lb)
-      return "-inf" if lb.nil? || lb == -Cbc::INF
-      return "+inf" if lb == Cbc::INF
-      lb.to_s
+    def lb_to_s(lower_bound)
+      return "-inf" if lower_bound.nil? || lower_bound == -Cbc::INF
+      return "+inf" if lower_bound == Cbc::INF
+      lower_bound.to_s
     end
 
-    def ub_to_s(ub)
-      return "+inf" if ub.nil? || ub == Cbc::INF
-      return "-inf" if ub == -Cbc::INF
-      ub.to_s
+    def ub_to_s(upper_bound)
+      return "+inf" if upper_bound.nil? || upper_bound == Cbc::INF
+      return "-inf" if upper_bound == -Cbc::INF
+      upper_bound.to_s
     end
   end
 end

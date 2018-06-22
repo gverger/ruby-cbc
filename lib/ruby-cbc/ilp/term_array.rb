@@ -1,4 +1,4 @@
-require 'forwardable'
+require "forwardable"
 
 module Ilp
   class TermArray
@@ -33,7 +33,7 @@ module Ilp
     end
 
     def *(other)
-      raise ArgumentError, 'Argument is not numeric' unless other.is_a? Numeric
+      raise ArgumentError, "Argument is not numeric" unless other.is_a? Numeric
       new_terms = terms.map { |term| term * other }
       TermArray.new(new_terms)
     end

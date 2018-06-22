@@ -1,14 +1,14 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe Cbc do
-  it 'has a version number' do
+  it "has a version number" do
     expect(Cbc::VERSION).not_to be nil
   end
 
   it "runs" do
     m = Cbc::Model.new
     x = m.int_var
-    m.enforce(2* x <= 4)
+    m.enforce(2 * x <= 4)
     m.maximize(x * 3)
     p = m.to_problem
     p.solve
@@ -19,7 +19,7 @@ describe Cbc do
   it "shows when infeasible" do
     m = Cbc::Model.new
     x = m.int_var
-    m.enforce(2* x <= 4)
+    m.enforce(2 * x <= 4)
     m.enforce(x >= 3)
     m.maximize(x * 3)
     p = m.to_problem
@@ -31,7 +31,7 @@ describe Cbc do
   it "find no conflict when feasible" do
     m = Cbc::Model.new
     x = m.int_var
-    m.enforce(2* x <= 4)
+    m.enforce(2 * x <= 4)
     m.maximize(x * 3)
     p = m.to_problem
     p.solve
@@ -42,8 +42,8 @@ describe Cbc do
 
   it "find a conflict when infeasible" do
     m = Cbc::Model.new
-    x = m.int_var(name: 'x')
-    y = m.int_var(name: 'y')
+    x = m.int_var(name: "x")
+    y = m.int_var(name: "y")
     m.enforce(sup_1: x >= 1)
     m.enforce(inf_5: x + y <= 5)
     m.enforce(sup_6: y >= 6)
@@ -52,8 +52,8 @@ describe Cbc do
     p.solve
     expect(p.proven_optimal?).to eq(false)
     expect(p.proven_infeasible?).to eq(true)
-    expect(p.find_conflict.map(&:to_function_s).sort).to eq(['inf_5(x, y)', 'sup_6(y)'].sort)
-    expect(p.find_conflict_vars.map(&:name).sort).to eq(['x', 'y'].sort)
+    expect(p.find_conflict.map(&:to_function_s).sort).to eq(["inf_5(x, y)", "sup_6(y)"].sort)
+    expect(p.find_conflict_vars.map(&:name).sort).to eq(%w[x y].sort)
   end
 
   it "is ok with infinite bounds" do
@@ -114,7 +114,7 @@ describe Cbc do
     expect(p.value_of(x)).to eq(4)
   end
 
-  it 'process a simple problem' do
+  it "process a simple problem" do
     # The same Brief Example as found in section 1.3 of
     # glpk-4.44/doc/glpk.pdf.
     #
@@ -135,7 +135,7 @@ describe Cbc do
 
     m.enforce(x1 + x2 + x3 <= 100)
     m.enforce(10 * x1 + 4 * x2 + 5 * x3 <= 600)
-    m.enforce(2 * x1 + 2 * x2 + 6* x3 <= 300)
+    m.enforce(2 * x1 + 2 * x2 + 6 * x3 <= 300)
 
     p = m.to_problem
 
@@ -156,6 +156,22 @@ describe Cbc do
     x = m.int_var(name: "x")
     m.enforce(2 * x <= 4)
     m.maximize(x * 3)
-    expect(m.to_s).to eq "Maximize\n  + 3 x\n\nSubject To\n  + 2 x <= 4\n\nBounds\n  -inf <= x <= +inf\n\nGenerals\n  x\n\nEnd\n"
+    expect(m.to_s).to eq(
+      <<-OUTPUT.gsub(/^        /, "") # Not very robust with code indentation
+        Maximize
+          + 3 x
+
+        Subject To
+          + 2 x <= 4
+
+        Bounds
+          -inf <= x <= +inf
+
+        Generals
+          x
+
+        End
+      OUTPUT
+    )
   end
 end
