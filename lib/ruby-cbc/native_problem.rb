@@ -32,11 +32,17 @@ module Cbc
       end
 
       @cbc_model = Cbc_wrapper.Cbc_newModel
-      Cbc_wrapper.Cbc_loadProblem(
-        @cbc_model, ccs.nb_vars, @crs.nb_constraints,
-        to_int_array(ccs.col_ptr), to_int_array(ccs.row_idx),
-        to_double_array(ccs.values), nil, nil, to_double_array(objective),
-        nil, nil)
+      Cbc_wrapper.Cbc_loadProblem(@cbc_model,
+                                  ccs.nb_vars,
+                                  @crs.nb_constraints,
+                                  to_int_array(ccs.col_ptr),
+                                  to_int_array(ccs.row_idx),
+                                  to_double_array(ccs.values),
+                                  nil,
+                                  nil,
+                                  to_double_array(objective),
+                                  nil,
+                                  nil)
 
       # Segmentation errors when setting name
       # Cbc_wrapper.Cbc_setProblemName(@cbc_model, model.name) if model.name
@@ -48,8 +54,8 @@ module Cbc
 
       idx = 0
       while idx < @crs.nb_constraints
-        c = @crs.model.constraints[idx]
-        set_constraint_bounds(c, idx)
+        contraint = @crs.model.constraints[idx]
+        set_constraint_bounds(contraint, idx)
         idx += 1
       end
       idx = 0
@@ -70,22 +76,23 @@ module Cbc
         idx += 1
       end
 
-      ObjectSpace.define_finalizer(self, self.class.finalizer(@cbc_model, @int_arrays, @double_arrays))
+      ObjectSpace.define_finalizer(self,
+                                   self.class.finalizer(@cbc_model, @int_arrays, @double_arrays))
 
       @default_solve_params = {
         log: 0
       }
     end
 
-    def set_constraint_bounds(c, idx)
-      case c.type
+    def set_constraint_bounds(contraint, idx)
+      case contraint.type
       when Ilp::Constraint::LESS_OR_EQ
-        Cbc_wrapper.Cbc_setRowUpper(@cbc_model, idx, c.bound)
+        Cbc_wrapper.Cbc_setRowUpper(@cbc_model, idx, contraint.bound)
       when Ilp::Constraint::GREATER_OR_EQ
-        Cbc_wrapper.Cbc_setRowLower(@cbc_model, idx, c.bound)
+        Cbc_wrapper.Cbc_setRowLower(@cbc_model, idx, contraint.bound)
       when Ilp::Constraint::EQUALS
-        Cbc_wrapper.Cbc_setRowUpper(@cbc_model, idx, c.bound)
-        Cbc_wrapper.Cbc_setRowLower(@cbc_model, idx, c.bound)
+        Cbc_wrapper.Cbc_setRowUpper(@cbc_model, idx, contraint.bound)
+        Cbc_wrapper.Cbc_setRowLower(@cbc_model, idx, contraint.bound)
       end
     end
 
@@ -145,7 +152,6 @@ module Cbc
         double_arrays.each { |ar| Cbc_wrapper.delete_doubleArray(ar) }
       end
     end
-
 
     private
 
