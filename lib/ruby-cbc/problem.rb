@@ -23,16 +23,22 @@ module Cbc
     attr_reader :last_run_status
     def solve(params = {})
       reader, writer = IO.pipe
-      fork do
-        reader.close
-        writer.binmode
-        writer.write Marshal.dump(solve_in_this_thread(params))
-        writer.close
-      end
-      writer.close
+      writer.binmode
       reader.binmode
-      @last_run_status = Marshal.load(reader.read)
-      reader.close
+      pid = fork do
+        begin
+          reader.close
+          run_status = solve_in_this_thread(params)
+          writer.write Marshal.dump(run_status)
+          writer.close
+        ensure
+          exit!
+        end
+      end
+      Process.waitpid pid
+      writer.close
+      read_bytes = reader.read
+      @last_run_status = Marshal.load(read_bytes)
     end
 
     def solve_in_this_thread(params = {})
@@ -49,6 +55,7 @@ module Cbc
 
     def computed_params(params)
       return params unless time_limit
+
       { sec: time_limit }.merge(params)
     end
 

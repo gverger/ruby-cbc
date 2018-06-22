@@ -29,12 +29,12 @@ module Cbc
       Cbc_wrapper.Cbc_loadProblem(@cbc_model,
                                   ccs.nb_vars,
                                   @crs.nb_constraints,
-                                  to_int_array(ccs.col_ptr),
-                                  to_int_array(ccs.row_idx),
-                                  to_double_array(ccs.values),
+                                  native_int_array(ccs.col_ptr),
+                                  native_int_array(ccs.row_idx),
+                                  native_double_array(ccs.values),
                                   nil,
                                   nil,
-                                  to_double_array(objective),
+                                  native_double_array(objective),
                                   nil,
                                   nil)
 
@@ -159,7 +159,7 @@ module Cbc
 
     private
 
-    def to_int_array(array)
+    def native_int_array(array)
       c_array = Cbc_wrapper::IntArray.new(array.size)
       idx = 0
       while idx < array.size
@@ -170,7 +170,7 @@ module Cbc
       c_array
     end
 
-    def to_double_array(array)
+    def native_double_array(array)
       c_array = Cbc_wrapper::DoubleArray.new(array.size)
       idx = 0
       while idx < array.size
