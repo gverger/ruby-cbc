@@ -9,6 +9,7 @@ files = %w[
   model
   problem
   native_problem
+  run_status
   version
   ilp/constant
   ilp/constraint

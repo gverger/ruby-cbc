@@ -97,7 +97,19 @@ module Cbc
       Cbc_wrapper.Cbc_solve(@cbc_model)
       @solution = Cbc_wrapper::DoubleArray.frompointer(Cbc_wrapper.Cbc_getColSolution(@cbc_model))
       @double_arrays << @solution
-      @solution
+      run_status
+    end
+
+    def run_status
+      RunStatus.new(
+        assignments: assignments,
+        optimal: proven_optimal?,
+        infeasible: proven_infeasible?,
+        time_limit_reached: time_limit_reached?,
+        solution_limit_reached: solution_limit_reached?,
+        objective_value: objective_value,
+        best_bound: best_bound
+      )
     end
 
     def proven_optimal?
@@ -125,14 +137,12 @@ module Cbc
       Cbc_wrapper.Cbc_getBestPossibleObjValue(@cbc_model)
     end
 
-    def value_of(var)
-      idx = @variable_index[var]
-      return nil if idx.nil?
-      if var.kind == Ilp::Var::CONTINUOUS_KIND
-        @solution[idx]
-      else
-        @solution[idx].round
-      end
+    def assignments
+      @variable_index.map do |var, index|
+        value = @solution[index]
+        value = value.round unless var.continuous?
+        [var, value]
+      end.to_h
     end
 
     def write

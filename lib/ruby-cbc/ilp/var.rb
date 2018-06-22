@@ -19,6 +19,10 @@ module Ilp
       @upper_bound = range.max
     end
 
+    def continuous?
+      kind == CONTINUOUS_KIND
+    end
+
     def bounds
       @lower_bound..@upper_bound
     end

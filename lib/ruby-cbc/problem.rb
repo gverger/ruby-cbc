@@ -1,5 +1,9 @@
+require "forwardable"
+
 module Cbc
   class Problem
+    extend Forwardable
+
     attr_accessor :model, :variable_index, :crs, :continuous, :time_limit
 
     def self.from_model(model, continuous: false)
@@ -16,13 +20,10 @@ module Cbc
       end
     end
 
+    attr_reader :last_run_status
     def solve(params = {})
       @native_problem = NativeProblem.from_problem(self)
-      @native_problem.solve(computed_params(params))
-    end
-
-    def value_of(var)
-      @native_problem.value_of(var)
+      @last_run_status = @native_problem.solve(computed_params(params))
     end
 
     # Keep this one for back compatibility
@@ -37,30 +38,14 @@ module Cbc
       { sec: time_limit }.merge(params)
     end
 
-    def proven_optimal?
-      @native_problem.proven_optimal?
-    end
-
-    def proven_infeasible?
-      @native_problem.proven_infeasible?
-    end
-
-    def time_limit_reached?
-      @native_problem.time_limit_reached?
-    end
-
-    def solution_limit_reached?
-      @native_problem.solution_limit_reached?
-    end
-
-    def objective_value
-      @native_problem.objective_value
-    end
-
-    # Returns the best know bound so far
-    def best_bound
-      @native_problem.best_bound
-    end
+    def_delegators :last_run_status,
+                   :proven_optimal?,
+                   :proven_infeasible?,
+                   :time_limit_reached?,
+                   :solution_limit_reached?,
+                   :objective_value,
+                   :best_bound,
+                   :value_of
 
     def find_conflict
       @find_conflict ||= ConflictSolver.new(self).find_conflict
