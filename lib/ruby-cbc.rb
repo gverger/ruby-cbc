@@ -8,6 +8,7 @@ files = %w[
   conflict_solver
   model
   problem
+  native_problem
   version
   ilp/constant
   ilp/constraint
@@ -15,7 +16,8 @@ files = %w[
   ilp/term
   ilp/term_array
   ilp/var
-  utils/compressed_row_storage
+  util/compressed_row_storage
+  util/compressed_column_storage
 ]
 
 files.each do |file|
