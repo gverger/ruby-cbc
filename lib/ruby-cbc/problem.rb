@@ -12,15 +12,12 @@ module Cbc
         p.model = crs.model
         p.variable_index = crs.variable_index
         p.crs = crs
-        p.create_cbc_problem(continuous: continuous)
       end
     end
 
-    def create_cbc_problem(continuous: false)
-      @native_problem = NativeProblem.from_problem(self, continuous: continuous)
-    end
-
     def solve(params = {})
+      continuous = false
+      @native_problem = NativeProblem.from_problem(self, continuous: continuous)
       @native_problem.solve
     end
 
@@ -70,30 +67,6 @@ module Cbc
 
     def write
       @native_problem.write
-    end
-
-    private
-
-    def to_int_array(array)
-      c_array = Cbc_wrapper::IntArray.new(array.size)
-      idx = 0
-      while idx < array.size
-        c_array[idx] = array[idx]
-        idx += 1
-      end
-      @int_arrays << c_array
-      c_array
-    end
-
-    def to_double_array(array)
-      c_array = Cbc_wrapper::DoubleArray.new(array.size)
-      idx = 0
-      while idx < array.size
-        c_array[idx] = array[idx]
-        idx += 1
-      end
-      @double_arrays << c_array
-      c_array
     end
   end
 end
