@@ -1,6 +1,6 @@
 module Cbc
   class Problem
-    attr_accessor :model, :variable_index, :crs
+    attr_accessor :model, :variable_index, :crs, :continuous, :time_limit
 
     def self.from_model(model, continuous: false)
       crs = Util::CompressedRowStorage.from_model(model)
@@ -12,13 +12,13 @@ module Cbc
         p.model = crs.model
         p.variable_index = crs.variable_index
         p.crs = crs
+        p.continuous = continuous
       end
     end
 
     def solve(params = {})
-      continuous = false
-      @native_problem = NativeProblem.from_problem(self, continuous: continuous)
-      @native_problem.solve
+      @native_problem = NativeProblem.from_problem(self)
+      @native_problem.solve(computed_params(params))
     end
 
     def value_of(var)
@@ -28,9 +28,14 @@ module Cbc
     # Keep this one for back compatibility
     # rubocop:disable Naming/AccessorMethodName
     def set_time_limit(seconds)
-      @default_solve_params[:sec] = seconds
+      self.time_limit = seconds
     end
     # rubocop:enable Naming/AccessorMethodName
+
+    def computed_params(params)
+      return params unless time_limit
+      { sec: time_limit }.merge(params)
+    end
 
     def proven_optimal?
       @native_problem.proven_optimal?

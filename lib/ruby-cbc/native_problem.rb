@@ -1,13 +1,7 @@
 module Cbc
   class NativeProblem
-    CCS = Struct.new(:col_ptr, :row_idx, :values) do
-      def nb_vars
-        col_ptr.size - 1
-      end
-    end
-
-    def self.from_problem(problem, continuous:)
-      new(problem.crs, problem.variable_index, problem.model, continuous)
+    def self.from_problem(problem)
+      new(problem.crs, problem.variable_index, problem.model, problem.continuous)
     end
 
     attr_reader :crs, :variable_index, :continuous, :model
