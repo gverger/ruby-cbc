@@ -22,6 +22,20 @@ module Cbc
 
     attr_reader :last_run_status
     def solve(params = {})
+      reader, writer = IO.pipe
+      fork do
+        reader.close
+        writer.binmode
+        writer.write Marshal.dump(solve_in_this_thread(params))
+        writer.close
+      end
+      writer.close
+      reader.binmode
+      @last_run_status = Marshal.load(reader.read)
+      reader.close
+    end
+
+    def solve_in_this_thread(params = {})
       @native_problem = NativeProblem.from_problem(self)
       @last_run_status = @native_problem.solve(computed_params(params))
     end
@@ -44,8 +58,12 @@ module Cbc
                    :time_limit_reached?,
                    :solution_limit_reached?,
                    :objective_value,
-                   :best_bound,
-                   :value_of
+                   :best_bound
+
+    def value_of(variable)
+      return nil unless variable_index[variable]
+      last_run_status.value_of(variable_index[variable])
+    end
 
     def find_conflict
       @find_conflict ||= ConflictSolver.new(self).find_conflict

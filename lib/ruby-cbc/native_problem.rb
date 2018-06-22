@@ -141,8 +141,8 @@ module Cbc
       @variable_index.map do |var, index|
         value = @solution[index]
         value = value.round unless var.continuous?
-        [var, value]
-      end.to_h
+        value
+      end
     end
 
     def write

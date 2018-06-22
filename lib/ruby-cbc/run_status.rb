@@ -36,8 +36,8 @@ module Cbc
       @solution_limit_reached
     end
 
-    def value_of(variable)
-      @assignments[variable]
+    def value_of(index)
+      @assignments[index]
     end
   end
 end
