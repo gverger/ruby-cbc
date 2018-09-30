@@ -137,7 +137,8 @@ module Cbc
         Cbc_wrapper.Cbc_setParameter(@cbc_model, name.to_s, value.to_s)
       end
       Cbc_wrapper.Cbc_solve(@cbc_model)
-      @solution = Cbc_wrapper::DoubleArray.frompointer(Cbc_wrapper.Cbc_getColSolution(@cbc_model))
+      @solution = Cbc_wrapper.Cbc_getColSolution(@cbc_model).read_array_of_double(variable_index.count)
+
       @double_arrays << @solution
       @solution
     end
@@ -207,24 +208,14 @@ module Cbc
     private
 
     def to_int_array(array)
-      c_array = Cbc_wrapper::IntArray.new(array.size)
-      idx = 0
-      while idx < array.size
-        c_array[idx] = array[idx]
-        idx += 1
-      end
-      @int_arrays << c_array
+      c_array = FFI::MemoryPointer.new :int, array.size, false
+      c_array.put_array_of_int(0, array)
       c_array
     end
 
     def to_double_array(array)
-      c_array = Cbc_wrapper::DoubleArray.new(array.size)
-      idx = 0
-      while idx < array.size
-        c_array[idx] = array[idx]
-        idx += 1
-      end
-      @double_arrays << c_array
+      c_array = FFI::MemoryPointer.new :double, array.size, false
+      c_array.put_array_of_double(0, array)
       c_array
     end
   end

@@ -1,10 +1,11 @@
 require "ruby-cbc/version"
-require "cbc-wrapper"
+# require "cbc-wrapper"
 
 module Cbc
 end
 
 files = %w[
+  cbc_wrapper
   conflict_solver
   model
   problem

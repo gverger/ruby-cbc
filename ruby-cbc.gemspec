@@ -29,5 +29,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rubocop-rspec"
   spec.add_development_dependency "ruby-prof"
 
-  spec.add_dependency "cbc-wrapper", "~> 2.9.9.2"
+  spec.add_dependency "ffi"
+  # spec.add_dependency "cbc-wrapper", "~> 2.9.9.2"
 end
