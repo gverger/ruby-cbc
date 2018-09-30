@@ -4,11 +4,12 @@ module Cbc
   module Cbc_wrapper
     extend FFI::Library
 
+    ffi_lib_flags :lazy, :global
+    ffi_lib "CbcSolver"
+
     typedef :pointer, :model
     typedef :pointer, :int_array
     typedef :pointer, :double_array
-
-    ffi_lib "libCbcSolver"
 
     attach_function :Cbc_newModel, [], :model
     attach_function :Cbc_loadProblem, %i[model int int int_array int_array double_array pointer pointer double_array pointer pointer], :void
