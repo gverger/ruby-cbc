@@ -1,4 +1,6 @@
 language: ruby
 rvm:
   - 2.2.3
-before_install: gem install bundler -v 1.10.6
+before_install:
+  - sudo apt-get -y install coinor-libcbc-dev
+  - gem install bundler -v 1.10.6
