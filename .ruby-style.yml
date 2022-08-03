@@ -10,5 +10,5 @@ Metrics/BlockLength:
   Exclude:
     - spec/*
 
-Layout/IndentHeredoc:
+Layout/HeredocIndentation:
   Enabled: false
