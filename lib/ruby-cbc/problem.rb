@@ -56,9 +56,6 @@ module Cbc
     end
 
     def create_cbc_problem(continuous: false)
-      @int_arrays = []
-      @double_arrays = []
-
       ccs = self.class.crs_to_ccs(@crs)
       objective = Array.new(ccs.nb_vars, 0)
       if model.objective
@@ -114,8 +111,7 @@ module Cbc
         idx += 1
       end
 
-      ObjectSpace.define_finalizer(self,
-                                   self.class.finalizer(@cbc_model, @int_arrays, @double_arrays))
+      ObjectSpace.define_finalizer(self, self.class.finalizer(@cbc_model))
 
       @default_solve_params = { log: 0 }
     end
@@ -138,8 +134,6 @@ module Cbc
       end
       Cbc_wrapper.Cbc_solve(@cbc_model)
       @solution = Cbc_wrapper::DoubleArray.frompointer(Cbc_wrapper.Cbc_getColSolution(@cbc_model))
-      @double_arrays << @solution
-      @solution
     end
 
     def value_of(var)
@@ -192,11 +186,9 @@ module Cbc
       @find_conflict_vars ||= find_conflict.map(&:vars).flatten.uniq
     end
 
-    def self.finalizer(cbc_model, int_arrays, double_arrays)
+    def self.finalizer(cbc_model)
       proc do
         Cbc_wrapper.Cbc_deleteModel(cbc_model)
-        int_arrays.each { |ar| Cbc_wrapper.delete_intArray(ar) }
-        double_arrays.each { |ar| Cbc_wrapper.delete_doubleArray(ar) }
       end
     end
 
@@ -213,7 +205,6 @@ module Cbc
         c_array[idx] = array[idx]
         idx += 1
       end
-      @int_arrays << c_array
       c_array
     end
 
@@ -224,7 +215,6 @@ module Cbc
         c_array[idx] = array[idx]
         idx += 1
       end
-      @double_arrays << c_array
       c_array
     end
   end
