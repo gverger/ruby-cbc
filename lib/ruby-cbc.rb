@@ -16,6 +16,9 @@ files = %w[
   ilp/term_array
   ilp/var
   utils/compressed_row_storage
+  utils/c_string
+  utils/problem_unwrap
+  utils/mps
 ]
 
 files.each do |file|
